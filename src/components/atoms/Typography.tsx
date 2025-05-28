@@ -30,12 +30,12 @@ const typographyVariants = cva(
 )
 
 export interface TypographyProps
-  extends React.HTMLAttributes<HTMLElement>,
+  extends Omit<React.HTMLAttributes<HTMLElement>, 'as'>,
     VariantProps<typeof typographyVariants> {
   gradient?: boolean
   isAnimated?: boolean
   animationDelay?: number
-  as?: keyof JSX.IntrinsicElements
+  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div'
 }
 
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
@@ -47,74 +47,66 @@ const Typography = React.forwardRef<HTMLElement, TypographyProps>(
     )
 
     const renderContent = () => {
-      // Use explicit 'as' prop first
+      // Use explicit 'as' prop first with type-safe casting
       if (as) {
-        const CustomComponent = as
-        return (
-          <CustomComponent
-            className={baseClassName}
-            ref={ref as any}
-            {...props}
-          >
-            {children}
-          </CustomComponent>
-        )
+        const elementProps = {
+          className: baseClassName,
+          ref: ref as React.Ref<any>,
+          ...props
+        }
+
+        switch (as) {
+          case 'h1':
+            return React.createElement('h1', elementProps, children)
+          case 'h2':
+            return React.createElement('h2', elementProps, children)
+          case 'h3':
+            return React.createElement('h3', elementProps, children)
+          case 'h4':
+            return React.createElement('h4', elementProps, children)
+          case 'h5':
+            return React.createElement('h5', elementProps, children)
+          case 'h6':
+            return React.createElement('h6', elementProps, children)
+          case 'p':
+            return React.createElement('p', elementProps, children)
+          case 'span':
+            return React.createElement('span', elementProps, children)
+          case 'div':
+            return React.createElement('div', elementProps, children)
+          default:
+            return React.createElement('p', elementProps, children)
+        }
       }
 
       // Otherwise use variant-specific elements with explicit JSX
+      const elementProps = {
+        className: baseClassName,
+        ref: ref as React.Ref<any>,
+        ...props
+      }
+
       switch (variant) {
         case 'h1':
-          return (
-            <h1 className={baseClassName} ref={ref as any} {...props}>
-              {children}
-            </h1>
-          )
+          return React.createElement('h1', elementProps, children)
         case 'h2':
-          return (
-            <h2 className={baseClassName} ref={ref as any} {...props}>
-              {children}
-            </h2>
-          )
+          return React.createElement('h2', elementProps, children)
         case 'h3':
-          return (
-            <h3 className={baseClassName} ref={ref as any} {...props}>
-              {children}
-            </h3>
-          )
+          return React.createElement('h3', elementProps, children)
         case 'h4':
-          return (
-            <h4 className={baseClassName} ref={ref as any} {...props}>
-              {children}
-            </h4>
-          )
+          return React.createElement('h4', elementProps, children)
         case 'h5':
-          return (
-            <h5 className={baseClassName} ref={ref as any} {...props}>
-              {children}
-            </h5>
-          )
+          return React.createElement('h5', elementProps, children)
         case 'h6':
-          return (
-            <h6 className={baseClassName} ref={ref as any} {...props}>
-              {children}
-            </h6>
-          )
+          return React.createElement('h6', elementProps, children)
         case 'small':
-          return (
-            <span className={baseClassName} ref={ref as any} {...props}>
-              {children}
-            </span>
-          )
+          return React.createElement('span', elementProps, children)
         case 'lead':
         case 'large':
         case 'muted':
         case 'p':
         default:
-          return (
-            <p className={baseClassName} ref={ref as any} {...props}>
-              {children}
-            </p>
-          )
+          return React.createElement('p', elementProps, children)
       }
     }
 
