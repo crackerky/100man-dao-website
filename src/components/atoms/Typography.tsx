@@ -29,21 +29,6 @@ const typographyVariants = cva(
   }
 )
 
-// Map variants to their corresponding HTML elements
-const variantElementMap = {
-  h1: 'h1',
-  h2: 'h2', 
-  h3: 'h3',
-  h4: 'h4',
-  h5: 'h5',
-  h6: 'h6',
-  p: 'p',
-  lead: 'p',
-  large: 'p',
-  small: 'span',
-  muted: 'p',
-} as const
-
 export interface TypographyProps
   extends React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof typographyVariants> {
@@ -55,22 +40,85 @@ export interface TypographyProps
 
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
   ({ className, variant, gradient = false, isAnimated = false, animationDelay = 0, as, children, ...props }, ref) => {
-    // Use the explicit 'as' prop, or fall back to the mapped element for the variant
-    const Component = as || (variant ? variantElementMap[variant] : 'p')
-    
-    const content = (
-      <Component
-        className={cn(
-          typographyVariants({ variant }),
-          gradient && "gradient-text",
-          className
-        )}
-        ref={ref as any}
-        {...props}
-      >
-        {children}
-      </Component>
+    const baseClassName = cn(
+      typographyVariants({ variant }),
+      gradient && "gradient-text",
+      className
     )
+
+    const renderContent = () => {
+      // Use explicit 'as' prop first
+      if (as) {
+        const CustomComponent = as
+        return (
+          <CustomComponent
+            className={baseClassName}
+            ref={ref as any}
+            {...props}
+          >
+            {children}
+          </CustomComponent>
+        )
+      }
+
+      // Otherwise use variant-specific elements with explicit JSX
+      switch (variant) {
+        case 'h1':
+          return (
+            <h1 className={baseClassName} ref={ref as any} {...props}>
+              {children}
+            </h1>
+          )
+        case 'h2':
+          return (
+            <h2 className={baseClassName} ref={ref as any} {...props}>
+              {children}
+            </h2>
+          )
+        case 'h3':
+          return (
+            <h3 className={baseClassName} ref={ref as any} {...props}>
+              {children}
+            </h3>
+          )
+        case 'h4':
+          return (
+            <h4 className={baseClassName} ref={ref as any} {...props}>
+              {children}
+            </h4>
+          )
+        case 'h5':
+          return (
+            <h5 className={baseClassName} ref={ref as any} {...props}>
+              {children}
+            </h5>
+          )
+        case 'h6':
+          return (
+            <h6 className={baseClassName} ref={ref as any} {...props}>
+              {children}
+            </h6>
+          )
+        case 'small':
+          return (
+            <span className={baseClassName} ref={ref as any} {...props}>
+              {children}
+            </span>
+          )
+        case 'lead':
+        case 'large':
+        case 'muted':
+        case 'p':
+        default:
+          return (
+            <p className={baseClassName} ref={ref as any} {...props}>
+              {children}
+            </p>
+          )
+      }
+    }
+
+    const content = renderContent()
 
     if (isAnimated) {
       return (
