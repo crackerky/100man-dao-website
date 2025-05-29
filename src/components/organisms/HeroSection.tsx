@@ -1,166 +1,216 @@
 "use client"
 
-import * as React from "react"
-import { motion } from "framer-motion"
-import { Typography } from "@/components/atoms/Typography"
-import { Button } from "@/components/atoms/Button"
-import { Triangle } from "@/components/atoms/Triangle"
-import { AnimatedCounter } from "@/components/molecules/AnimatedCounter"
-import { cn } from "@/lib/utils"
+import { useEffect, useRef } from "react"
+import { motion, useMotionValue, useTransform } from "framer-motion"
 
-export interface HeroSectionProps {
-  className?: string
-}
+export function HeroSection() {
+  const sectionRef = useRef<HTMLElement>(null)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
 
-const HeroSection = React.forwardRef<HTMLElement, HeroSectionProps>(
-  ({ className }, ref) => {
-    return (
-      <section
-        ref={ref}
-        className={cn(
-          "relative min-h-screen flex items-center justify-center overflow-hidden",
-          className
-        )}
-      >
-        {/* Background decorations */}
-        <Triangle
-          variant="top-right"
-          size="xl"
-          isAnimated
-          animationDelay={0.5}
-        />
-        <Triangle
-          variant="bottom-left"
-          size="lg"
-          isAnimated
-          animationDelay={0.8}
+  // Transform mouse position to movement values
+  const backgroundMoveX = useTransform(mouseX, [0, 1], [-2, 2])
+  const backgroundMoveY = useTransform(mouseY, [0, 1], [-2, 2])
+  const circleMoveX = useTransform(mouseX, [0, 1], [-5, 5])
+  const circleMoveY = useTransform(mouseY, [0, 1], [-5, 5])
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (sectionRef.current) {
+        const rect = sectionRef.current.getBoundingClientRect()
+        const x = (e.clientX - rect.left) / rect.width
+        const y = (e.clientY - rect.top) / rect.height
+        mouseX.set(x)
+        mouseY.set(y)
+      }
+    }
+
+    const section = sectionRef.current
+    if (section) {
+      section.addEventListener("mousemove", handleMouseMove)
+      return () => section.removeEventListener("mousemove", handleMouseMove)
+    }
+  }, [mouseX, mouseY])
+
+  // Particle creation
+  useEffect(() => {
+    const createParticles = () => {
+      if (!sectionRef.current) return
+
+      for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+          const particle = document.createElement("div")
+          particle.className = "absolute w-0.5 h-0.5 bg-white/30 rounded-full animate-float-particle pointer-events-none"
+          particle.style.left = Math.random() * 100 + "%"
+          particle.style.animationDelay = Math.random() * 15 + "s"
+          particle.style.animationDuration = (10 + Math.random() * 10) + "s"
+          
+          sectionRef.current?.appendChild(particle)
+          
+          setTimeout(() => {
+            if (particle.parentNode) {
+              particle.parentNode.removeChild(particle)
+            }
+          }, 20000)
+        }, i * 1000)
+      }
+    }
+
+    createParticles()
+    const interval = setInterval(createParticles, 20000)
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <section
+      ref={sectionRef}
+      className="relative h-screen flex items-center justify-center overflow-hidden px-10 md:px-[10vw] py-[20vh] cursor-none"
+    >
+      {/* Interactive Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Background Circles */}
+        <motion.div
+          className="absolute w-[40vw] h-[40vw] rounded-full border border-white/5 top-1/2 left-1/2"
+          style={{
+            background: "radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%)",
+            x: circleMoveX,
+            y: circleMoveY,
+            translateX: "-50%",
+            translateY: "-50%"
+          }}
+          animate={{
+            scale: [1, 1.05, 1],
+            opacity: [1, 0.8, 1]
+          }}
+          transition={{
+            duration: 4,
+            ease: "easeInOut",
+            repeat: Infinity
+          }}
         />
         
-        {/* Floating triangles */}
         <motion.div
-          className="absolute top-1/4 left-1/4 w-16 h-16 triangle-decoration bg-secondary/30"
+          className="absolute w-[60vw] h-[60vw] rounded-full border border-white/2 top-1/2 left-1/2"
+          style={{
+            translateX: "-50%",
+            translateY: "-50%"
+          }}
           animate={{
-            y: [0, -20, 0],
-            rotate: [0, 180, 360],
+            scale: [1, 1.05, 1],
+            opacity: [1, 0.8, 1]
           }}
           transition={{
             duration: 6,
-            repeat: Infinity,
             ease: "easeInOut",
+            repeat: Infinity,
+            direction: "reverse"
           }}
         />
         
         <motion.div
-          className="absolute top-1/3 right-1/3 w-12 h-12 triangle-decoration bg-accent/30"
+          className="absolute w-[80vw] h-[80vw] rounded-full border border-white/[0.01] top-1/2 left-1/2"
+          style={{
+            translateX: "-50%",
+            translateY: "-50%"
+          }}
           animate={{
-            y: [0, 15, 0],
-            rotate: [0, -180, -360],
+            scale: [1, 1.05, 1],
+            opacity: [1, 0.8, 1]
           }}
           transition={{
             duration: 8,
-            repeat: Infinity,
             ease: "easeInOut",
-            delay: 1,
+            repeat: Infinity
           }}
         />
 
-        <div className="container mx-auto px-4 text-center z-10">
-          {/* Main heading */}
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Typography
-              variant="h1"
-              className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6"
-              gradient
-            >
-              １００万人DAO
-            </Typography>
-          </motion.div>
-
-          {/* Subtitle */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <Typography
-              variant="lead"
-              className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto"
-            >
-              遊休資産価値化プロジェクト<br />
-              DAOの理念とエコシステムで新しい社会システムを構築
-            </Typography>
-          </motion.div>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
-          >
-            <Button variant="gradient" size="lg" className="text-lg px-8">
-              今すぐ参加する
-            </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8">
-              詳細を見る
-            </Button>
-          </motion.div>
-
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto"
-          >
-            <div className="text-center">
-              <AnimatedCounter end={1000000} suffix="人" />
-              <Typography variant="small" className="text-muted-foreground mt-2">
-                目標参加者数
-              </Typography>
-            </div>
-            <div className="text-center">
-              <AnimatedCounter end={50} suffix="+" />
-              <Typography variant="small" className="text-muted-foreground mt-2">
-                パートナー企業
-              </Typography>
-            </div>
-            <div className="text-center">
-              <AnimatedCounter end={10} suffix="億円" />
-              <Typography variant="small" className="text-muted-foreground mt-2">
-                資産価値化目標
-              </Typography>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Scroll indicator */}
+        {/* Gradient Background */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center"
-          >
-            <motion.div
-              animate={{ y: [0, 16, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-1 h-3 bg-white/50 rounded-full mt-2"
-            />
-          </motion.div>
-        </motion.div>
-      </section>
-    )
-  }
-)
-HeroSection.displayName = "HeroSection"
+          className="absolute w-[120%] h-[120%] -top-[10%] -left-[10%]"
+          style={{
+            background: "radial-gradient(ellipse at center, rgba(10,10,30,0.3) 0%, rgba(0,0,0,0.9) 100%)",
+            x: backgroundMoveX,
+            y: backgroundMoveY
+          }}
+        />
+      </div>
 
-export { HeroSection }
+      {/* Hero Text */}
+      <div className="relative z-10 text-center w-full pointer-events-none">
+        <motion.div
+          className="text-xs md:text-base lg:text-2xl font-light tracking-[0.3em] mb-6 md:mb-12 opacity-60 uppercase"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 0.6, y: 0 }}
+          transition={{ duration: 2, delay: 0.5, ease: "easeOut" }}
+        >
+          Synthesize Assets,
+        </motion.div>
+
+        <motion.div
+          className="text-4xl md:text-8xl lg:text-[12rem] font-black leading-[0.75] tracking-[-0.02em] mb-8 md:mb-16 text-white relative cursor-none"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
+        >
+          <motion.span
+            className="inline-block transition-all duration-300 hover:scale-105 hover:text-white/80"
+            whileHover={{
+              textShadow: "0 0 20px rgba(255, 255, 255, 0.1)"
+            }}
+          >
+            MILLION
+          </motion.span>
+          <br />
+          <motion.span
+            className="inline-block transition-all duration-300 hover:scale-105 hover:text-white/80"
+            whileHover={{
+              textShadow: "0 0 20px rgba(255, 255, 255, 0.1)"
+            }}
+          >
+            MEMBER
+          </motion.span>
+          <br />
+          <motion.span
+            className="inline-block transition-all duration-300 hover:scale-105 hover:text-white/80"
+            whileHover={{
+              textShadow: "0 0 20px rgba(255, 255, 255, 0.1)"
+            }}
+          >
+            DAO
+          </motion.span>
+        </motion.div>
+
+        <motion.div
+          className="text-sm md:text-xl lg:text-4xl font-light tracking-[0.1em] leading-[1.4] opacity-50"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 0.5, y: 0 }}
+          transition={{ duration: 2, delay: 1, ease: "easeOut" }}
+        >
+          For Community and Value.
+        </motion.div>
+      </div>
+
+      <style jsx>{`
+        @keyframes float-particle {
+          0% {
+            transform: translateY(100vh) translateX(0px);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(-10vh) translateX(100px);
+            opacity: 0;
+          }
+        }
+        .animate-float-particle {
+          animation: float-particle 15s linear infinite;
+        }
+      `}</style>
+    </section>
+  )
+}
