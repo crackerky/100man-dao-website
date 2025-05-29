@@ -3,14 +3,14 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
-  // Optimize build performance
+  // Clean build configuration for production deployment
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Enable experimental features if needed
-  experimental: {
-    optimizeCss: true,
-  }
+  // Remove experimental features that cause dependency issues
+  experimental: {},
+  // Ensure output is standalone for better deployment compatibility
+  output: 'standalone',
 }
 
 module.exports = nextConfig
