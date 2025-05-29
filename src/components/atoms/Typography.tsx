@@ -40,20 +40,20 @@ export interface TypographyProps
 
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
   ({ className, variant, gradient = false, isAnimated = false, animationDelay = 0, as, children, ...props }, ref) => {
-    const Component = as || (variant?.startsWith('h') ? variant : 'p')
+    const Component = (as || (variant?.startsWith('h') ? variant : 'p')) as keyof JSX.IntrinsicElements
     
-    const content = (
-      <Component
-        className={cn(
+    const content = React.createElement(
+      Component,
+      {
+        className: cn(
           typographyVariants({ variant }),
           gradient && "gradient-text",
           className
-        )}
-        ref={ref as any}
-        {...props}
-      >
-        {children}
-      </Component>
+        ),
+        ref: ref as any,
+        ...props
+      },
+      children
     )
 
     if (isAnimated) {
