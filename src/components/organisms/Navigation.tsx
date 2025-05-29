@@ -1,143 +1,75 @@
 "use client"
 
-import * as React from "react"
+import Link from "next/link"
 import { motion } from "framer-motion"
-import { Logo } from "@/components/atoms/Logo"
-import { Button } from "@/components/atoms/Button"
-import { NavItem } from "@/components/molecules/NavItem"
-import { cn } from "@/lib/utils"
-import { usePathname } from "next/navigation"
 
-const navigationItems = [
-  { label: "ホーム", href: "/" },
-  { label: "DAOについて", href: "/about" },
-  { label: "エコシステム", href: "/ecosystem" },
-  { label: "ロードマップ", href: "/roadmap" },
-  { label: "コミュニティ", href: "/community" },
-  { label: "お問い合わせ", href: "/contact" },
-]
+export function Navigation() {
+  const navLeftItems = [
+    { href: "#", label: "INDEX" },
+    { href: "#profile", label: "PROFILE" },
+    { href: "#works", label: "WORKS" },
+    { href: "#contact", label: "CONTACT" },
+  ]
 
-export interface NavigationProps {
-  className?: string
-}
+  const navRightItems = [
+    { href: "#", label: "X" },
+    { href: "#", label: "Discord" },
+    { href: "#", label: "YouTube" },
+    { href: "#", label: "GitHub" },
+  ]
 
-const Navigation = React.forwardRef<HTMLElement, NavigationProps>(
-  ({ className }, ref) => {
-    const pathname = usePathname()
-    const [isScrolled, setIsScrolled] = React.useState(false)
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
-
-    React.useEffect(() => {
-      const handleScroll = () => {
-        setIsScrolled(window.scrollY > 10)
-      }
-
-      window.addEventListener('scroll', handleScroll)
-      return () => window.removeEventListener('scroll', handleScroll)
-    }, [])
-
-    return (
-      <motion.nav
-        ref={ref}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled
-            ? "glass-card backdrop-blur-lg shadow-lg"
-            : "bg-transparent",
-          className
-        )}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Logo isAnimated />
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-1">
-              {navigationItems.map((item) => (
-                <NavItem
-                  key={item.href}
-                  label={item.label}
-                  href={item.href}
-                  isActive={pathname === item.href}
-                />
-              ))}
-            </div>
-
-            {/* CTA Button */}
-            <div className="hidden md:block">
-              <Button variant="gradient" size="sm">
-                参加する
-              </Button>
-            </div>
-
-            {/* Mobile menu button */}
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  {isMobileMenuOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  )}
-                </svg>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile menu */}
-        {isMobileMenuOpen && (
+  return (
+    <motion.nav
+      className="fixed top-0 left-0 right-0 z-[1000] px-10 py-5 flex justify-between items-start"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    >
+      {/* Left Navigation */}
+      <div className="flex flex-col gap-1.5">
+        {navLeftItems.map((item, index) => (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden glass-card border-t border-white/10"
+            key={item.label}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ 
+              duration: 0.6, 
+              delay: index * 0.1,
+              ease: "easeOut" 
+            }}
           >
-            <div className="px-4 py-3 space-y-1">
-              {navigationItems.map((item) => (
-                <NavItem
-                  key={item.href}
-                  label={item.label}
-                  href={item.href}
-                  isActive={pathname === item.href}
-                  className="block w-full text-left px-3 py-2"
-                />
-              ))}
-              <div className="pt-3">
-                <Button variant="gradient" className="w-full">
-                  参加する
-                </Button>
-              </div>
-            </div>
+            <Link
+              href={item.href}
+              className="text-white text-sm tracking-wider font-normal hover:opacity-70 transition-opacity duration-300"
+            >
+              {item.label}
+            </Link>
           </motion.div>
-        )}
-      </motion.nav>
-    )
-  }
-)
-Navigation.displayName = "Navigation"
+        ))}
+      </div>
 
-export { Navigation }
+      {/* Right Navigation */}
+      <div className="hidden md:flex gap-5">
+        {navRightItems.map((item, index) => (
+          <motion.div
+            key={item.label}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ 
+              duration: 0.6, 
+              delay: index * 0.1 + 0.2,
+              ease: "easeOut" 
+            }}
+          >
+            <Link
+              href={item.href}
+              className="text-white text-xs hover:opacity-70 transition-opacity duration-300"
+            >
+              {item.label}
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+    </motion.nav>
+  )
+}
