@@ -3,14 +3,16 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com'],
   },
-  // Clean build configuration for production deployment
+  // Clean configuration for Netlify deployment
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Remove experimental features that cause dependency issues
-  experimental: {},
-  // Ensure output is standalone for better deployment compatibility
-  output: 'standalone',
+  // Remove output standalone for Netlify compatibility
+  trailingSlash: false,
+  // Optimize for static export when possible
+  experimental: {
+    // Only include stable experimental features
+  }
 }
 
 module.exports = nextConfig
