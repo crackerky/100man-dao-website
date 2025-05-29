@@ -1,233 +1,185 @@
-# 100万人DAO - 遊休資産価値化プロジェクト
+# Million Member DAO Website
 
-![100万人DAO](https://img.shields.io/badge/100万人DAO-遊休資産価値化プロジェクト-blue)
-![Next.js](https://img.shields.io/badge/Next.js-14.0.4-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.3.0-38B2AC)
-![Framer Motion](https://img.shields.io/badge/Framer%20Motion-10.16.16-pink)
+A cutting-edge, community-driven asset valorization platform website built with modern web technologies.
 
-100万人DAOの公式ウェブサイト - DAOの理念とエコシステムを通じて、遊休資産の価値化を推進し、新しい社会システムを構築します。
+## 🌟 Features
 
-## 🌟 プロジェクト概要
+- **Interactive Hero Section** with particle system and mouse-tracking effects
+- **Animated Background** with noise gradients and texture overlays
+- **4 Service Areas** with custom geometric icons and smooth animations
+- **Responsive Design** optimized for all screen sizes
+- **Custom Cursor** with smooth spring animations
+- **Glassmorphism UI** with backdrop blur effects
+- **Framer Motion Animations** for smooth page transitions
+- **Performance Optimized** with reduced motion support
 
-100万人DAOは、分散型自律組織（DAO）の理念を基盤とし、遊休資産の価値化を通じて新しい経済エコシステムを構築するプロジェクトです。100万人のコミュニティを目標に、民主的で透明性の高い組織運営で、持続可能な社会を実現します。
+## 🛠️ Tech Stack
 
-### 🎯 主要な特徴
+- **[Next.js 14](https://nextjs.org/)** - React framework with App Router
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
+- **[Framer Motion](https://www.framer.com/motion/)** - Production-ready motion library
+- **[shadcn/ui](https://ui.shadcn.com/)** - Re-usable components built with Radix UI
+- **[Lucide React](https://lucide.dev/)** - Beautiful hand-crafted SVG icons
 
-- **分散型意思決定**: 中央管理者のいない組織で、メンバーが直接意思決定に参加
-- **スマートコントラクト**: ブロックチェーン技術を活用した自動化されたルールとガバナンス
-- **グローバルアクセス**: 世界中の誰でも参加できるオープンなコミュニティ
-- **資産価値化**: 遊休資産を有効活用し、新しい価値を生み出すエコシステム
-- **持続可能性**: 環境と社会に配慮した持続可能なビジネスモデル
-- **イノベーション**: 最新技術と革新的なアプローチで社会問題を解決
+## 🚀 Getting Started
 
-## 🚀 技術スタック
+### Prerequisites
 
-### フロントエンド
-- **Next.js 14** - App Router対応のReactフレームワーク
-- **TypeScript** - 型安全性を保証する静的型付け言語
-- **TailwindCSS** - ユーティリティファーストのCSSフレームワーク
-- **shadcn/ui** - 美しく再利用可能なUIコンポーネント
-- **Framer Motion** - 滑らかなアニメーションライブラリ
+- Node.js 18+ 
+- npm, yarn, or pnpm
 
-### 設計パターン
-- **アトミックデザイン** - 保守性と再利用性を重視したコンポーネント設計
-- **モバイルファースト** - レスポンシブデザインの採用
-- **アクセシビリティ** - 包括的なユーザー体験の提供
+### Installation
 
-## 📁 プロジェクト構造
-
-```
-100man-dao-website/
-├── public/                 # 静的アセット
-├── src/
-│   ├── app/               # Next.js App Router ページ
-│   │   ├── about/         # DAOについて
-│   │   ├── ecosystem/     # エコシステム
-│   │   ├── roadmap/       # ロードマップ
-│   │   ├── community/     # コミュニティ
-│   │   ├── contact/       # お問い合わせ
-│   │   ├── globals.css    # グローバルスタイル
-│   │   ├── layout.tsx     # ルートレイアウト
-│   │   └── page.tsx       # ホームページ
-│   ├── components/        # コンポーネント（アトミックデザイン）
-│   │   ├── atoms/         # 基本的なUIコンポーネント
-│   │   ├── molecules/     # 複数のAtomsを組み合わせたコンポーネント
-│   │   ├── organisms/     # 複雑なUIセクション
-│   │   └── templates/     # ページレイアウトテンプレート
-│   └── lib/              # ユーティリティ関数
-├── tailwind.config.js    # TailwindCSS設定
-├── next.config.js        # Next.js設定
-└── package.json          # 依存関係と scripts
-```
-
-## 🎨 デザインシステム
-
-### カラーパレット
-- **プライマリ**: #0066CC（青）- 信頼性と安定性
-- **セカンダリ**: #FF6600（オレンジ）- エネルギーと革新
-- **アクセント**: #00CC66（緑）- 成長と持続可能性
-- **背景**: ダークモード対応のグラデーション
-
-### デザイン要素
-- **トライアングル**: ブランドアイデンティティの核となる幾何学的要素
-- **グラスモーフィズム**: 現代的な透明感のあるUI
-- **アニメーション**: 直感的で滑らかなユーザーインタラクション
-
-## 🛠️ 開発
-
-### 前提条件
-- Node.js 18.17以降
-- npm または yarn
-
-### セットアップ
-
-1. リポジトリをクローン
+1. Clone the repository:
 ```bash
 git clone https://github.com/crackerky/100man-dao-website.git
 cd 100man-dao-website
 ```
 
-2. 依存関係をインストール
+2. Install dependencies:
 ```bash
 npm install
-# または
+# or
 yarn install
+# or
+pnpm install
 ```
 
-3. 開発サーバーを起動
+3. Run the development server:
 ```bash
 npm run dev
-# または
+# or
 yarn dev
+# or
+pnpm dev
 ```
 
-4. ブラウザで [http://localhost:3000](http://localhost:3000) を開く
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### ビルド
+## 📁 Project Structure
 
-```bash
-npm run build
-npm start
+```
+src/
+├── app/
+│   ├── globals.css          # Global styles and animations
+│   ├── layout.tsx           # Root layout
+│   └── page.tsx             # Homepage
+├── components/
+│   ├── molecules/           # Small reusable components
+│   │   ├── CustomCursor.tsx
+│   │   ├── NumberCounter.tsx
+│   │   └── ServiceIcon.tsx
+│   └── organisms/           # Large section components
+│       ├── ApproachSection.tsx
+│       ├── ContactSection.tsx
+│       ├── FooterWorks.tsx
+│       ├── HeroSection.tsx
+│       ├── Navigation.tsx
+│       ├── NoiseBackground.tsx
+│       ├── ProfileSection.tsx
+│       ├── VideoSection.tsx
+│       └── WorksSection.tsx
+└── lib/
+    └── utils.ts             # Utility functions
 ```
 
-## 📄 ページ構成
+## 🎨 Key Sections
 
-### 🏠 ホームページ (`/`)
-- ヒーローセクション - インパクトのある第一印象
-- DAOの特徴 - 6つの主要な特徴を詳しく紹介
-- エコシステム構築ステップ - 4段階の構築プロセス
-- ロードマップ - 100万人達成までの道のり
-- コミュニティ参加の呼びかけ
+### Hero Section
+- Interactive particle system
+- Mouse-tracking background elements
+- Responsive typography with hover effects
+- Custom cursor integration
 
-### ℹ️ DAOについて (`/about`)
-- DAOの定義と特徴
-- 従来の組織との違い
-- 100万人DAOの特徴
-- DAO設立の4ステップ
+### Approach Section
+- 4 animated service icons (Real Estate, Financial Assets, Digital Assets, Community Power)
+- Geometric shapes with CSS transforms
+- Hover interactions and parallax effects
 
-### 🌱 エコシステム (`/ecosystem`)
-- エコシステム構築の4ステップ
-- 多様な資産の価値化（物理的・知的・デジタル・環境資産など）
-- 持続可能な価値創造サイクル
+### Works Section
+- Grid layout for featured projects
+- Gradient backgrounds
+- Smooth hover animations
 
-### 🗺️ ロードマップ (`/roadmap`)
-- 詳細なプロジェクトタイムライン
-- 各フェーズの具体的な成果目標
-- KPI（重要業績評価指標）の追跡
+### Contact Section
+- Call-to-action button
+- Decorative animated elements
 
-### 👥 コミュニティ (`/community`)
-- 参加のメリット
-- コミュニティイベント
-- コミュニティガイドライン
-- 参加方法
+## 🎭 Animations
 
-### 📧 お問い合わせ (`/contact`)
-- お問い合わせフォーム
-- 連絡方法
-- FAQ
-- ソーシャルメディアリンク
+The website features several custom animations:
 
-## 🎯 主要機能
+- **Noise Gradient Flow** - Continuous background movement
+- **Particle System** - Floating particles in hero section
+- **Breathing Effects** - Subtle scale animations on elements
+- **Service Icons** - Geometric shapes with unique animations
+- **Parallax Scrolling** - Mouse-responsive element movement
 
-### ✨ アニメーション
-- **ページ遷移**: 滑らかなページ間の移動
-- **スクロールアニメーション**: 要素が画面に入る際のエフェクト
-- **インタラクション**: ホバーやクリック時のフィードバック
-- **ローディング**: 魅力的なローディングアニメーション
+## 📱 Responsive Design
 
-### 📱 レスポンシブデザイン
-- **モバイル**: 〜640px - スマートフォン最適化
-- **タブレット**: 641px〜1024px - タブレット向けレイアウト
-- **デスクトップ**: 1025px〜 - デスクトップ用の広々としたレイアウト
+The website is fully responsive with breakpoints for:
+- Mobile (< 768px)
+- Tablet (768px - 1024px) 
+- Desktop (> 1024px)
 
-### ♿ アクセシビリティ
-- セマンティックなHTML構造
-- キーボードナビゲーション対応
-- スクリーンリーダー対応
-- 適切なコントラスト比
+Special considerations for mobile:
+- Reduced animation complexity
+- Touch-optimized interactions
+- Performance-first approach
 
-## 🌐 デプロイ
+## ♿ Accessibility
 
-### Vercel (推奨)
-1. [Vercel](https://vercel.com) でアカウント作成
-2. GitHubリポジトリと連携
-3. 自動デプロイの設定
+- Semantic HTML structure
+- Keyboard navigation support
+- Screen reader friendly
+- High contrast mode support
+- Reduced motion preferences respected
 
-### その他のプラットフォーム
-- Netlify
-- AWS Amplify
-- GitHub Pages (静的エクスポート)
+## 🚀 Deployment
 
-## 🤝 コントリビューション
+The easiest way to deploy is using [Vercel](https://vercel.com/):
 
-1. フォークを作成
-2. フィーチャーブランチを作成 (`git checkout -b feature/amazing-feature`)
-3. 変更をコミット (`git commit -m 'Add amazing feature'`)
-4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
-5. プルリクエストを作成
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/crackerky/100man-dao-website)
 
-## 📈 今後の拡張予定
+Alternatively, you can deploy to:
+- [Netlify](https://netlify.com/)
+- [Railway](https://railway.app/)
+- [Digital Ocean](https://www.digitalocean.com/products/app-platform/)
 
-- **多言語対応** (i18n) - グローバル展開に向けた多言語サポート
-- **メンバー専用エリア** - 認証システムとダッシュボード
-- **オンラインイベント機能** - バーチャルイベントの統合
-- **トークン関連機能** - ガバナンストークンとの連携
-- **分析ダッシュボード** - 詳細なアナリティクス
+## 🎨 Design Philosophy
 
-## 📊 パフォーマンス最適化
+The Million Member DAO website embodies:
 
-- **画像最適化**: Next.js Image コンポーネント
-- **コード分割**: 動的インポートとレイジーローディング
-- **バンドル最適化**: Tree shaking と最小化
-- **CDN活用**: 静的アセットの高速配信
+- **Modern Minimalism** - Clean, focused design with purposeful elements
+- **Interactive Storytelling** - Engaging animations that guide user attention
+- **Community-Centric** - Design reflects collaborative and inclusive values
+- **Technology Forward** - Cutting-edge web technologies for smooth experience
+- **Performance First** - Optimized for speed and accessibility
 
-## 🔒 セキュリティ
+## 🤝 Contributing
 
-- **型安全性**: TypeScriptによる型チェック
-- **依存関係**: 定期的なセキュリティアップデート
-- **データ検証**: フォーム入力の適切な検証
-- **XSS対策**: React の組み込み保護機能
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📞 サポート
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-- **公式ウェブサイト**: [100man-dao.com](https://100man-dao.com)
-- **Discord**: コミュニティサポート
-- **Email**: contact@100man-dao.com
-- **GitHub Issues**: 技術的な問題報告
+## 📄 License
 
-## 📄 ライセンス
+This project is open source and available under the [MIT License](LICENSE).
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 🎯 About Million Member DAO
 
-## 🙏 謝辞
+Million Member DAO is a community-driven asset valorization platform that focuses on:
 
-- **shadcn/ui** - 美しいUIコンポーネント
-- **Lucide React** - 高品質なアイコンライブラリ
-- **Framer Motion** - 滑らかなアニメーション
-- **TailwindCSS** - 効率的なスタイリング
-- **Next.js Team** - 素晴らしいReactフレームワーク
+- **Real Estate** - Idle property utilization and transformation
+- **Financial Assets** - DeFi protocols and yield optimization  
+- **Digital Assets** - NFT ecosystems and token economies
+- **Community Power** - Collective intelligence and governance
 
 ---
 
-**100万人DAOとともに、持続可能な未来を創造しましょう！** 🌍✨
+Built with ❤️ for the future of decentralized communities.
