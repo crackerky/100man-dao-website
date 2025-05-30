@@ -10,5 +10,8 @@ export { Input } from './atoms/Input'
 export { Logo } from './atoms/Logo'
 export { Triangle } from './atoms/Triangle'
 
+// Organisms
+export { default as ScatteredLinesToCircle } from './organisms/ScatteredLinesToCircle'
+
 // Templates  
 export { default as DemoPageTemplate } from './templates/DemoPageTemplate'
