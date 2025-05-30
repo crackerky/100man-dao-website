@@ -93,20 +93,23 @@ export function GeometricBackground() {
     const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
     const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
 
+    // Fixed useTransform usage for combining multiple MotionValues
+    const combinedX = useTransform(
+      () => scrollOffset.get() + waveX.get() + mouseInfluenceX.get()
+    )
+    
+    const combinedY = useTransform(
+      () => scrollOffset.get() + waveY.get() + mouseInfluenceY.get()
+    )
+
     const baseMotionProps = {
       key: obj.id,
       className: "absolute will-change-transform",
       style: {
         left: `${obj.initialX}%`,
         top: `${obj.initialY}%`,
-        x: useTransform(
-          [scrollOffset, waveX, mouseInfluenceX], 
-          ([scroll, wave, mouse]: [number, number, number]) => scroll + wave + mouse
-        ),
-        y: useTransform(
-          [scrollOffset, waveY, mouseInfluenceY], 
-          ([scroll, wave, mouse]: [number, number, number]) => scroll + wave + mouse
-        ),
+        x: combinedX,
+        y: combinedY,
         rotate: rotationOffset,
       },
       animate: {
