@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, memo } from "react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
 
 interface GeometricObject {
@@ -16,6 +16,156 @@ interface GeometricObject {
   pulseDelay: number
   waveOffset: number
 }
+
+interface GeometricShapeProps {
+  obj: GeometricObject
+  scrollYProgress: any
+  mouseXSpring: any
+  mouseYSpring: any
+  isVisible: boolean
+}
+
+// Separate component for each geometric shape to avoid hooks in loops
+const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring, isVisible }: GeometricShapeProps) => {
+  if (!isVisible) return null
+
+  // Simplified transforms for better performance
+  const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -200 * obj.speed])
+  const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 180 * obj.speed])
+  
+  // Simplified wave motion
+  const waveX = useTransform(scrollYProgress, [0, 1], [0, Math.sin(obj.waveOffset) * 50])
+  const waveY = useTransform(scrollYProgress, [0, 1], [0, Math.cos(obj.waveOffset) * 30])
+  
+  // Reduced mouse interaction
+  const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
+  const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
+
+  // Fixed useTransform usage for combining multiple MotionValues
+  const combinedX = useTransform(
+    () => scrollOffset.get() + waveX.get() + mouseInfluenceX.get()
+  )
+  
+  const combinedY = useTransform(
+    () => scrollOffset.get() + waveY.get() + mouseInfluenceY.get()
+  )
+
+  const baseMotionProps = {
+    className: "absolute will-change-transform",
+    style: {
+      left: `${obj.initialX}%`,
+      top: `${obj.initialY}%`,
+      x: combinedX,
+      y: combinedY,
+      rotate: rotationOffset,
+    },
+    animate: {
+      scale: [1, 1.05, 1],
+      opacity: [obj.opacity, obj.opacity * 1.3, obj.opacity],
+    },
+    transition: {
+      duration: 5 + obj.pulseDelay,
+      repeat: Infinity,
+      ease: "easeInOut",
+      delay: obj.pulseDelay,
+    }
+  }
+
+  const shapeStyle = {
+    width: obj.size,
+    height: obj.size,
+    background: obj.color,
+    opacity: obj.opacity,
+    filter: 'blur(0.5px)',
+  }
+
+  switch (obj.type) {
+    case 'triangle':
+      return (
+        <motion.div {...baseMotionProps}>
+          <div
+            style={{
+              width: 0,
+              height: 0,
+              borderLeft: `${obj.size / 2}px solid transparent`,
+              borderRight: `${obj.size / 2}px solid transparent`,
+              borderBottom: `${obj.size}px solid ${obj.color}`,
+              opacity: obj.opacity,
+              filter: 'blur(0.5px)',
+            }}
+          />
+        </motion.div>
+      )
+
+    case 'circle':
+      return (
+        <motion.div
+          {...baseMotionProps}
+          className="absolute rounded-full will-change-transform"
+          style={{
+            ...baseMotionProps.style,
+            ...shapeStyle,
+          }}
+        />
+      )
+
+    case 'square':
+      return (
+        <motion.div
+          {...baseMotionProps}
+          style={{
+            ...baseMotionProps.style,
+            ...shapeStyle,
+            borderRadius: '2px',
+          }}
+        />
+      )
+
+    case 'hexagon':
+      return (
+        <motion.div
+          {...baseMotionProps}
+          style={{
+            ...baseMotionProps.style,
+            ...shapeStyle,
+            clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+          }}
+        />
+      )
+
+    case 'diamond':
+      return (
+        <motion.div
+          {...baseMotionProps}
+          style={{
+            ...baseMotionProps.style,
+            ...shapeStyle,
+            clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+          }}
+        />
+      )
+
+    case 'line':
+      return (
+        <motion.div
+          {...baseMotionProps}
+          style={{
+            ...baseMotionProps.style,
+            width: obj.size * 1.5,
+            height: 1,
+            background: `linear-gradient(90deg, transparent, ${obj.color}, transparent)`,
+            opacity: obj.opacity,
+            filter: 'blur(0.5px)',
+          }}
+        />
+      )
+
+    default:
+      return null
+  }
+})
+
+GeometricShape.displayName = 'GeometricShape'
 
 export function GeometricBackground() {
   const [objects, setObjects] = useState<GeometricObject[]>([])
@@ -78,149 +228,21 @@ export function GeometricBackground() {
     setObjects(newObjects)
   }, [])
 
-  const renderGeometricShape = useCallback((obj: GeometricObject) => {
-    if (!isVisible) return null
-
-    // Simplified transforms for better performance
-    const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -200 * obj.speed])
-    const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 180 * obj.speed])
-    
-    // Simplified wave motion
-    const waveX = useTransform(scrollYProgress, [0, 1], [0, Math.sin(obj.waveOffset) * 50])
-    const waveY = useTransform(scrollYProgress, [0, 1], [0, Math.cos(obj.waveOffset) * 30])
-    
-    // Reduced mouse interaction
-    const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
-    const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
-
-    const baseMotionProps = {
-      key: obj.id,
-      className: "absolute will-change-transform",
-      style: {
-        left: `${obj.initialX}%`,
-        top: `${obj.initialY}%`,
-        x: useTransform(
-          [scrollOffset, waveX, mouseInfluenceX], 
-          ([scroll, wave, mouse]: [number, number, number]) => scroll + wave + mouse
-        ),
-        y: useTransform(
-          [scrollOffset, waveY, mouseInfluenceY], 
-          ([scroll, wave, mouse]: [number, number, number]) => scroll + wave + mouse
-        ),
-        rotate: rotationOffset,
-      },
-      animate: {
-        scale: [1, 1.05, 1],
-        opacity: [obj.opacity, obj.opacity * 1.3, obj.opacity],
-      },
-      transition: {
-        duration: 5 + obj.pulseDelay,
-        repeat: Infinity,
-        ease: "easeInOut",
-        delay: obj.pulseDelay,
-      }
-    }
-
-    const shapeStyle = {
-      width: obj.size,
-      height: obj.size,
-      background: obj.color,
-      opacity: obj.opacity,
-      filter: 'blur(0.5px)',
-    }
-
-    switch (obj.type) {
-      case 'triangle':
-        return (
-          <motion.div {...baseMotionProps}>
-            <div
-              style={{
-                width: 0,
-                height: 0,
-                borderLeft: `${obj.size / 2}px solid transparent`,
-                borderRight: `${obj.size / 2}px solid transparent`,
-                borderBottom: `${obj.size}px solid ${obj.color}`,
-                opacity: obj.opacity,
-                filter: 'blur(0.5px)',
-              }}
-            />
-          </motion.div>
-        )
-
-      case 'circle':
-        return (
-          <motion.div
-            {...baseMotionProps}
-            className="absolute rounded-full will-change-transform"
-            style={{
-              ...baseMotionProps.style,
-              ...shapeStyle,
-            }}
-          />
-        )
-
-      case 'square':
-        return (
-          <motion.div
-            {...baseMotionProps}
-            style={{
-              ...baseMotionProps.style,
-              ...shapeStyle,
-              borderRadius: '2px',
-            }}
-          />
-        )
-
-      case 'hexagon':
-        return (
-          <motion.div
-            {...baseMotionProps}
-            style={{
-              ...baseMotionProps.style,
-              ...shapeStyle,
-              clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
-            }}
-          />
-        )
-
-      case 'diamond':
-        return (
-          <motion.div
-            {...baseMotionProps}
-            style={{
-              ...baseMotionProps.style,
-              ...shapeStyle,
-              clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
-            }}
-          />
-        )
-
-      case 'line':
-        return (
-          <motion.div
-            {...baseMotionProps}
-            style={{
-              ...baseMotionProps.style,
-              width: obj.size * 1.5,
-              height: 1,
-              background: `linear-gradient(90deg, transparent, ${obj.color}, transparent)`,
-              opacity: obj.opacity,
-              filter: 'blur(0.5px)',
-            }}
-          />
-        )
-
-      default:
-        return null
-    }
-  }, [isVisible, scrollYProgress, mouseXSpring, mouseYSpring])
-
   if (!isVisible) return null
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[-8] overflow-hidden">
       <div className="relative w-full h-full">
-        {objects.map(obj => renderGeometricShape(obj))}
+        {objects.map(obj => (
+          <GeometricShape
+            key={obj.id}
+            obj={obj}
+            scrollYProgress={scrollYProgress}
+            mouseXSpring={mouseXSpring}
+            mouseYSpring={mouseYSpring}
+            isVisible={isVisible}
+          />
+        ))}
       </div>
     </div>
   )
