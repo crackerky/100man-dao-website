@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from "fram
 
 interface GeometricObject {
   id: number
-  type: 'triangle' | 'circle' | 'square' | 'hexagon' | 'diamond' | 'line' | 'star' | 'pentagon'
+  type: 'triangle' | 'circle' | 'square' | 'hexagon' | 'diamond' | 'line'
   size: number
   initialX: number
   initialY: number
@@ -15,7 +15,6 @@ interface GeometricObject {
   color: string
   pulseDelay: number
   waveOffset: number
-  spiralRadius: number
 }
 
 export function GeometricBackground() {
@@ -48,36 +47,32 @@ export function GeometricBackground() {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
   }, [])
 
-  // Generate geometric objects
+  // Generate geometric objects (reduced count for performance)
   useEffect(() => {
     const colors = [
-      'rgba(120, 255, 214, 0.08)',
-      'rgba(120, 119, 255, 0.08)', 
-      'rgba(255, 119, 120, 0.08)',
-      'rgba(200, 120, 255, 0.08)',
-      'rgba(120, 200, 255, 0.08)',
-      'rgba(180, 255, 120, 0.08)',
-      'rgba(255, 180, 255, 0.08)',
-      'rgba(255, 200, 120, 0.08)',
-      'rgba(100, 255, 255, 0.08)',
-      'rgba(255, 100, 200, 0.08)',
+      'rgba(120, 255, 214, 0.06)',
+      'rgba(120, 119, 255, 0.06)', 
+      'rgba(255, 119, 120, 0.06)',
+      'rgba(200, 120, 255, 0.06)',
+      'rgba(120, 200, 255, 0.06)',
+      'rgba(180, 255, 120, 0.06)',
     ]
 
-    const types: GeometricObject['type'][] = ['triangle', 'circle', 'square', 'hexagon', 'diamond', 'line', 'star', 'pentagon']
+    const types: GeometricObject['type'][] = ['triangle', 'circle', 'square', 'hexagon', 'diamond', 'line']
 
-    const newObjects: GeometricObject[] = Array.from({ length: 35 }, (_, i) => ({
+    // Reduced from 35 to 20 for better build performance
+    const newObjects: GeometricObject[] = Array.from({ length: 20 }, (_, i) => ({
       id: i,
       type: types[Math.floor(Math.random() * types.length)],
-      size: Math.random() * 100 + 15, // 15-115px
-      initialX: Math.random() * 110 - 5, // -5% to 105% (offscreen start)
+      size: Math.random() * 80 + 20, // 20-100px
+      initialX: Math.random() * 110 - 5, // -5% to 105%
       initialY: Math.random() * 110 - 5, // -5% to 105%
-      speed: Math.random() * 1.2 + 0.3, // 0.3-1.5
-      opacity: Math.random() * 0.4 + 0.05, // 0.05-0.45
+      speed: Math.random() * 1.0 + 0.3, // 0.3-1.3
+      opacity: Math.random() * 0.3 + 0.05, // 0.05-0.35
       rotation: Math.random() * 360,
       color: colors[Math.floor(Math.random() * colors.length)],
-      pulseDelay: Math.random() * 5,
+      pulseDelay: Math.random() * 4,
       waveOffset: Math.random() * Math.PI * 2,
-      spiralRadius: Math.random() * 50 + 20
     }))
 
     setObjects(newObjects)
@@ -86,24 +81,17 @@ export function GeometricBackground() {
   const renderGeometricShape = useCallback((obj: GeometricObject) => {
     if (!isVisible) return null
 
-    // Individual transforms with explicit types
-    const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -300 * obj.speed])
-    const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 360 * obj.speed])
+    // Simplified transforms for better performance
+    const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -200 * obj.speed])
+    const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 180 * obj.speed])
     
-    // Wave motion
-    const waveX = useTransform(scrollYProgress, [0, 1], [0, Math.sin(obj.waveOffset) * 100])
-    const waveY = useTransform(scrollYProgress, [0, 1], [0, Math.cos(obj.waveOffset * 1.3) * 50])
+    // Simplified wave motion
+    const waveX = useTransform(scrollYProgress, [0, 1], [0, Math.sin(obj.waveOffset) * 50])
+    const waveY = useTransform(scrollYProgress, [0, 1], [0, Math.cos(obj.waveOffset) * 30])
     
-    // Mouse interaction
-    const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-20 * obj.speed, 20 * obj.speed])
-    const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-20 * obj.speed, 20 * obj.speed])
-
-    const shapeProps = {
-      width: obj.size,
-      height: obj.size,
-      background: obj.color,
-      opacity: obj.opacity,
-    }
+    // Reduced mouse interaction
+    const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
+    const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
 
     const baseMotionProps = {
       key: obj.id,
@@ -122,15 +110,23 @@ export function GeometricBackground() {
         rotate: rotationOffset,
       },
       animate: {
-        scale: [1, 1.1, 1],
-        opacity: [obj.opacity, obj.opacity * 1.5, obj.opacity],
+        scale: [1, 1.05, 1],
+        opacity: [obj.opacity, obj.opacity * 1.3, obj.opacity],
       },
       transition: {
-        duration: 4 + obj.pulseDelay,
+        duration: 5 + obj.pulseDelay,
         repeat: Infinity,
         ease: "easeInOut",
         delay: obj.pulseDelay,
       }
+    }
+
+    const shapeStyle = {
+      width: obj.size,
+      height: obj.size,
+      background: obj.color,
+      opacity: obj.opacity,
+      filter: 'blur(0.5px)',
     }
 
     switch (obj.type) {
@@ -158,9 +154,7 @@ export function GeometricBackground() {
             className="absolute rounded-full will-change-transform"
             style={{
               ...baseMotionProps.style,
-              ...shapeProps,
-              filter: 'blur(1px)',
-              boxShadow: `0 0 20px ${obj.color}`,
+              ...shapeStyle,
             }}
           />
         )
@@ -171,8 +165,7 @@ export function GeometricBackground() {
             {...baseMotionProps}
             style={{
               ...baseMotionProps.style,
-              ...shapeProps,
-              filter: 'blur(0.5px)',
+              ...shapeStyle,
               borderRadius: '2px',
             }}
           />
@@ -184,12 +177,8 @@ export function GeometricBackground() {
             {...baseMotionProps}
             style={{
               ...baseMotionProps.style,
-              width: obj.size,
-              height: obj.size,
-              background: obj.color,
-              opacity: obj.opacity,
+              ...shapeStyle,
               clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
-              filter: 'blur(0.5px)',
             }}
           />
         )
@@ -200,44 +189,8 @@ export function GeometricBackground() {
             {...baseMotionProps}
             style={{
               ...baseMotionProps.style,
-              width: obj.size,
-              height: obj.size,
-              background: obj.color,
-              opacity: obj.opacity,
+              ...shapeStyle,
               clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
-              filter: 'blur(0.5px)',
-            }}
-          />
-        )
-
-      case 'star':
-        return (
-          <motion.div
-            {...baseMotionProps}
-            style={{
-              ...baseMotionProps.style,
-              width: obj.size,
-              height: obj.size,
-              background: obj.color,
-              opacity: obj.opacity,
-              clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
-              filter: 'blur(0.5px)',
-            }}
-          />
-        )
-
-      case 'pentagon':
-        return (
-          <motion.div
-            {...baseMotionProps}
-            style={{
-              ...baseMotionProps.style,
-              width: obj.size,
-              height: obj.size,
-              background: obj.color,
-              opacity: obj.opacity,
-              clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
-              filter: 'blur(0.5px)',
             }}
           />
         )
@@ -248,7 +201,7 @@ export function GeometricBackground() {
             {...baseMotionProps}
             style={{
               ...baseMotionProps.style,
-              width: obj.size * 2,
+              width: obj.size * 1.5,
               height: 1,
               background: `linear-gradient(90deg, transparent, ${obj.color}, transparent)`,
               opacity: obj.opacity,
@@ -269,24 +222,6 @@ export function GeometricBackground() {
       <div className="relative w-full h-full">
         {objects.map(obj => renderGeometricShape(obj))}
       </div>
-      
-      {/* Additional atmospheric effect */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.1) 100%)',
-          x: useTransform(mouseXSpring, [-1, 1], [-50, 50]),
-          y: useTransform(mouseYSpring, [-1, 1], [-50, 50]),
-        }}
-        animate={{
-          opacity: [0.0, 0.05, 0.0]
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
     </div>
   )
 }
