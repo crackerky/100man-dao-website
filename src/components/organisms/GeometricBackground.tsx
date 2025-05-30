@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState, memo } from "react"
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
+import { useEffect, useState, useMemo } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
 
 interface GeometricObject {
   id: number
@@ -13,76 +13,37 @@ interface GeometricObject {
   opacity: number
   rotation: number
   color: string
-  pulseDelay: number
-  waveOffset: number
 }
 
-interface GeometricShapeProps {
-  obj: GeometricObject
-  scrollYProgress: any
-  mouseXSpring: any
-  mouseYSpring: any
-  isVisible: boolean
-}
-
-// Separate component for each geometric shape to avoid hooks in loops
-const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring, isVisible }: GeometricShapeProps) => {
-  if (!isVisible) return null
-
-  // Simplified transforms for better performance
+// Create a separate component for each shape to avoid hooks in loops
+function GeometricShape({ obj }: { obj: GeometricObject }) {
+  const { scrollYProgress } = useScroll()
+  
+  // Move useTransform calls to component level to follow React rules
   const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -200 * obj.speed])
   const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 180 * obj.speed])
-  
-  // Simplified wave motion
-  const waveX = useTransform(scrollYProgress, [0, 1], [0, Math.sin(obj.waveOffset) * 50])
-  const waveY = useTransform(scrollYProgress, [0, 1], [0, Math.cos(obj.waveOffset) * 30])
-  
-  // Reduced mouse interaction
-  const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
-  const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-10 * obj.speed, 10 * obj.speed])
 
-  // Fixed useTransform usage for combining multiple MotionValues
-  const combinedX = useTransform(
-    () => scrollOffset.get() + waveX.get() + mouseInfluenceX.get()
-  )
-  
-  const combinedY = useTransform(
-    () => scrollOffset.get() + waveY.get() + mouseInfluenceY.get()
-  )
-
-  const baseMotionProps = {
-    className: "absolute will-change-transform",
-    style: {
-      left: `${obj.initialX}%`,
-      top: `${obj.initialY}%`,
-      x: combinedX,
-      y: combinedY,
-      rotate: rotationOffset,
-    },
-    animate: {
-      scale: [1, 1.05, 1],
-      opacity: [obj.opacity, obj.opacity * 1.3, obj.opacity],
-    },
-    transition: {
-      duration: 5 + obj.pulseDelay,
-      repeat: Infinity,
-      ease: "easeInOut",
-      delay: obj.pulseDelay,
-    }
-  }
-
-  const shapeStyle = {
+  const shapeProps = {
     width: obj.size,
     height: obj.size,
     background: obj.color,
     opacity: obj.opacity,
-    filter: 'blur(0.5px)',
+  }
+
+  const commonMotionProps = {
+    className: "absolute",
+    style: {
+      left: `${obj.initialX}%`,
+      top: `${obj.initialY}%`,
+      y: scrollOffset,
+      rotate: rotationOffset,
+    }
   }
 
   switch (obj.type) {
     case 'triangle':
       return (
-        <motion.div {...baseMotionProps}>
+        <motion.div {...commonMotionProps}>
           <div
             style={{
               width: 0,
@@ -91,7 +52,6 @@ const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring,
               borderRight: `${obj.size / 2}px solid transparent`,
               borderBottom: `${obj.size}px solid ${obj.color}`,
               opacity: obj.opacity,
-              filter: 'blur(0.5px)',
             }}
           />
         </motion.div>
@@ -100,11 +60,11 @@ const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring,
     case 'circle':
       return (
         <motion.div
-          {...baseMotionProps}
-          className="absolute rounded-full will-change-transform"
+          {...commonMotionProps}
+          className="absolute rounded-full"
           style={{
-            ...baseMotionProps.style,
-            ...shapeStyle,
+            ...commonMotionProps.style,
+            ...shapeProps,
           }}
         />
       )
@@ -112,11 +72,10 @@ const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring,
     case 'square':
       return (
         <motion.div
-          {...baseMotionProps}
+          {...commonMotionProps}
           style={{
-            ...baseMotionProps.style,
-            ...shapeStyle,
-            borderRadius: '2px',
+            ...commonMotionProps.style,
+            ...shapeProps,
           }}
         />
       )
@@ -124,10 +83,13 @@ const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring,
     case 'hexagon':
       return (
         <motion.div
-          {...baseMotionProps}
+          {...commonMotionProps}
           style={{
-            ...baseMotionProps.style,
-            ...shapeStyle,
+            ...commonMotionProps.style,
+            width: obj.size,
+            height: obj.size,
+            background: obj.color,
+            opacity: obj.opacity,
             clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
           }}
         />
@@ -136,10 +98,13 @@ const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring,
     case 'diamond':
       return (
         <motion.div
-          {...baseMotionProps}
+          {...commonMotionProps}
           style={{
-            ...baseMotionProps.style,
-            ...shapeStyle,
+            ...commonMotionProps.style,
+            width: obj.size,
+            height: obj.size,
+            background: obj.color,
+            opacity: obj.opacity,
             clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
           }}
         />
@@ -148,14 +113,13 @@ const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring,
     case 'line':
       return (
         <motion.div
-          {...baseMotionProps}
+          {...commonMotionProps}
           style={{
-            ...baseMotionProps.style,
+            ...commonMotionProps.style,
             width: obj.size * 1.5,
-            height: 1,
-            background: `linear-gradient(90deg, transparent, ${obj.color}, transparent)`,
+            height: 2,
+            background: obj.color,
             opacity: obj.opacity,
-            filter: 'blur(0.5px)',
           }}
         />
       )
@@ -163,87 +127,48 @@ const GeometricShape = memo(({ obj, scrollYProgress, mouseXSpring, mouseYSpring,
     default:
       return null
   }
-})
-
-GeometricShape.displayName = 'GeometricShape'
+}
 
 export function GeometricBackground() {
   const [objects, setObjects] = useState<GeometricObject[]>([])
-  const [isVisible, setIsVisible] = useState(true)
-  const { scrollYProgress } = useScroll()
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
-  const mouseXSpring = useSpring(mouseX, { damping: 25, stiffness: 100 })
-  const mouseYSpring = useSpring(mouseY, { damping: 25, stiffness: 100 })
 
-  // Mouse tracking
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set((e.clientX / window.innerWidth) * 2 - 1)
-      mouseY.set((e.clientY / window.innerHeight) * 2 - 1)
-    }
-
-    window.addEventListener('mousemove', handleMouseMove)
-    return () => window.removeEventListener('mousemove', handleMouseMove)
-  }, [mouseX, mouseY])
-
-  // Visibility optimization
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      setIsVisible(!document.hidden)
-    }
-
-    document.addEventListener('visibilitychange', handleVisibilityChange)
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
-  }, [])
-
-  // Generate geometric objects (reduced count for performance)
-  useEffect(() => {
+  // Generate geometric objects with restored visibility settings
+  const generatedObjects = useMemo(() => {
     const colors = [
-      'rgba(120, 255, 214, 0.06)',
-      'rgba(120, 119, 255, 0.06)', 
-      'rgba(255, 119, 120, 0.06)',
-      'rgba(200, 120, 255, 0.06)',
-      'rgba(120, 200, 255, 0.06)',
-      'rgba(180, 255, 120, 0.06)',
+      'rgba(120, 255, 214, 0.15)', // Restored original alpha values
+      'rgba(120, 119, 255, 0.15)', 
+      'rgba(255, 119, 120, 0.15)',
+      'rgba(200, 120, 255, 0.15)',
+      'rgba(120, 200, 255, 0.15)',
+      'rgba(180, 255, 120, 0.15)',
+      'rgba(255, 180, 255, 0.15)',
+      'rgba(255, 200, 120, 0.15)',
     ]
 
     const types: GeometricObject['type'][] = ['triangle', 'circle', 'square', 'hexagon', 'diamond', 'line']
 
-    // Reduced from 35 to 20 for better build performance
-    const newObjects: GeometricObject[] = Array.from({ length: 20 }, (_, i) => ({
+    return Array.from({ length: 25 }, (_, i) => ({
       id: i,
       type: types[Math.floor(Math.random() * types.length)],
       size: Math.random() * 80 + 20, // 20-100px
-      initialX: Math.random() * 110 - 5, // -5% to 105%
-      initialY: Math.random() * 110 - 5, // -5% to 105%
-      speed: Math.random() * 1.0 + 0.3, // 0.3-1.3
-      opacity: Math.random() * 0.3 + 0.05, // 0.05-0.35
+      initialX: Math.random() * 100, // 0-100% (restored original range)
+      initialY: Math.random() * 100, // 0-100%
+      speed: Math.random() * 0.8 + 0.2, // 0.2-1.0 (restored original speed)
+      opacity: Math.random() * 0.3 + 0.1, // 0.1-0.4 (restored original opacity)
       rotation: Math.random() * 360,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      pulseDelay: Math.random() * 4,
-      waveOffset: Math.random() * Math.PI * 2,
+      color: colors[Math.floor(Math.random() * colors.length)]
     }))
-
-    setObjects(newObjects)
   }, [])
 
-  if (!isVisible) return null
+  useEffect(() => {
+    setObjects(generatedObjects)
+  }, [generatedObjects])
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[-8] overflow-hidden">
-      <div className="relative w-full h-full">
-        {objects.map(obj => (
-          <GeometricShape
-            key={obj.id}
-            obj={obj}
-            scrollYProgress={scrollYProgress}
-            mouseXSpring={mouseXSpring}
-            mouseYSpring={mouseYSpring}
-            isVisible={isVisible}
-          />
-        ))}
-      </div>
+      {objects.map(obj => (
+        <GeometricShape key={obj.id} obj={obj} />
+      ))}
     </div>
   )
 }
