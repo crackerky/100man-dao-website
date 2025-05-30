@@ -86,7 +86,7 @@ export function GeometricBackground() {
   const renderGeometricShape = useCallback((obj: GeometricObject) => {
     if (!isVisible) return null
 
-    // Combined scroll and mouse transforms
+    // Individual transforms with explicit types
     const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -300 * obj.speed])
     const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 360 * obj.speed])
     
@@ -97,12 +97,6 @@ export function GeometricBackground() {
     // Mouse interaction
     const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-20 * obj.speed, 20 * obj.speed])
     const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-20 * obj.speed, 20 * obj.speed])
-    
-    // Combine transforms
-    const combinedX = useTransform([scrollOffset, waveX, mouseInfluenceX], 
-      ([scroll, wave, mouse]) => (scroll || 0) + (wave || 0) + (mouse || 0))
-    const combinedY = useTransform([scrollOffset, waveY, mouseInfluenceY], 
-      ([scroll, wave, mouse]) => (scroll || 0) + (wave || 0) + (mouse || 0))
 
     const shapeProps = {
       width: obj.size,
@@ -117,8 +111,14 @@ export function GeometricBackground() {
       style: {
         left: `${obj.initialX}%`,
         top: `${obj.initialY}%`,
-        x: combinedX,
-        y: combinedY,
+        x: useTransform(
+          [scrollOffset, waveX, mouseInfluenceX], 
+          ([scroll, wave, mouse]: [number, number, number]) => scroll + wave + mouse
+        ),
+        y: useTransform(
+          [scrollOffset, waveY, mouseInfluenceY], 
+          ([scroll, wave, mouse]: [number, number, number]) => scroll + wave + mouse
+        ),
         rotate: rotationOffset,
       },
       animate: {
