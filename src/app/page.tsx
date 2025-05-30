@@ -2,6 +2,7 @@
 
 import { Navigation } from "@/components/organisms/Navigation"
 import { NoiseBackground } from "@/components/organisms/NoiseBackground"
+import { GeometricBackground } from "@/components/organisms/GeometricBackground"
 import { HeroSection } from "@/components/organisms/HeroSection"
 import { ProfileSection } from "@/components/organisms/ProfileSection"
 import { ApproachSection } from "@/components/organisms/ApproachSection"
@@ -15,8 +16,9 @@ import { NumberCounter } from "@/components/molecules/NumberCounter"
 export default function HomePage() {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-x-hidden">
-      {/* Background Effects */}
+      {/* Layered Background Effects */}
       <NoiseBackground />
+      <GeometricBackground />
       
       {/* Navigation */}
       <Navigation />
