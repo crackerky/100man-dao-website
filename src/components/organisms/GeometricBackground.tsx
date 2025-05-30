@@ -86,7 +86,7 @@ export function GeometricBackground() {
   const renderGeometricShape = useCallback((obj: GeometricObject) => {
     if (!isVisible) return null
 
-    // Complex scroll-based transforms
+    // Combined scroll and mouse transforms
     const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -300 * obj.speed])
     const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 360 * obj.speed])
     
@@ -98,9 +98,11 @@ export function GeometricBackground() {
     const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-20 * obj.speed, 20 * obj.speed])
     const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-20 * obj.speed, 20 * obj.speed])
     
-    // Spiral motion
-    const spiralX = useTransform(scrollYProgress, [0, 1], [0, Math.cos(obj.spiralRadius * 0.1) * obj.spiralRadius])
-    const spiralY = useTransform(scrollYProgress, [0, 1], [0, Math.sin(obj.spiralRadius * 0.1) * obj.spiralRadius])
+    // Combine transforms
+    const combinedX = useTransform([scrollOffset, waveX, mouseInfluenceX], 
+      ([scroll, wave, mouse]) => (scroll || 0) + (wave || 0) + (mouse || 0))
+    const combinedY = useTransform([scrollOffset, waveY, mouseInfluenceY], 
+      ([scroll, wave, mouse]) => (scroll || 0) + (wave || 0) + (mouse || 0))
 
     const shapeProps = {
       width: obj.size,
@@ -115,8 +117,8 @@ export function GeometricBackground() {
       style: {
         left: `${obj.initialX}%`,
         top: `${obj.initialY}%`,
-        x: [scrollOffset, waveX, mouseInfluenceX, spiralX],
-        y: [scrollOffset, waveY, mouseInfluenceY, spiralY],
+        x: combinedX,
+        y: combinedY,
         rotate: rotationOffset,
       },
       animate: {
@@ -273,8 +275,8 @@ export function GeometricBackground() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.1) 100%)',
-          x: mouseInfluenceX,
-          y: mouseInfluenceY,
+          x: useTransform(mouseXSpring, [-1, 1], [-50, 50]),
+          y: useTransform(mouseYSpring, [-1, 1], [-50, 50]),
         }}
         animate={{
           opacity: [0.0, 0.05, 0.0]
