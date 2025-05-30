@@ -79,6 +79,18 @@ body {
   color: white;
 }
 
+/* Performance optimizations for geometric shapes */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* GPU acceleration for better performance */
+.geometric-shape {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
 /* Custom animations */
 @keyframes float-particle {
   0% {
@@ -143,6 +155,41 @@ body {
   }
 }
 
+@keyframes geometric-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(10px, -5px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-5px, 10px) rotate(-1deg);
+  }
+  75% {
+    transform: translate(5px, 5px) rotate(0.5deg);
+  }
+}
+
+@keyframes geometric-pulse {
+  0%, 100% {
+    opacity: 0.1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.3;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes geometric-spiral {
+  0% {
+    transform: rotate(0deg) translateX(0px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(50px) rotate(-360deg);
+  }
+}
+
 /* Utility classes */
 .animate-float-particle {
   animation: float-particle 15s linear infinite;
@@ -170,6 +217,18 @@ body {
 
 .animate-noise-texture {
   animation: noise-texture-flow 15s linear infinite;
+}
+
+.animate-geometric-drift {
+  animation: geometric-drift 12s ease-in-out infinite;
+}
+
+.animate-geometric-pulse {
+  animation: geometric-pulse 6s ease-in-out infinite;
+}
+
+.animate-geometric-spiral {
+  animation: geometric-spiral 20s linear infinite;
 }
 
 /* Glassmorphism utilities */
@@ -214,6 +273,14 @@ body {
   filter: brightness(1.1);
 }
 
+/* Geometric shape optimizations */
+.geometric-optimized {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+  contain: layout style paint;
+}
+
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .animate-gradient-flow {
@@ -224,6 +291,15 @@ body {
     animation-duration: 20s;
   }
   
+  .animate-geometric-drift {
+    animation-duration: 15s;
+  }
+  
+  /* Reduce geometric objects on mobile for performance */
+  .geometric-background {
+    transform: scale(0.8);
+  }
+  
   /* Reduce motion on mobile for better performance */
   @media (prefers-reduced-motion: reduce) {
     .animate-gradient-flow,
@@ -231,8 +307,19 @@ body {
     .animate-breathe,
     .animate-breathe-slow,
     .animate-breathe-slower,
-    .animate-pulse-slow {
+    .animate-pulse-slow,
+    .animate-geometric-drift,
+    .animate-geometric-pulse,
+    .animate-geometric-spiral {
       animation: none;
+    }
+    
+    .geometric-shape {
+      transform: none;
+    }
+    
+    .will-change-transform {
+      will-change: auto;
     }
   }
 }
@@ -243,6 +330,11 @@ body {
   .glass-dark {
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.8);
+  }
+  
+  .geometric-shape {
+    opacity: 0.8 !important;
+    filter: contrast(2);
   }
 }
 
@@ -261,8 +353,10 @@ body {
 @media print {
   .noise-gradient,
   .noise-texture,
+  .geometric-background,
   .animate-gradient-flow,
-  .animate-noise-texture {
+  .animate-noise-texture,
+  .geometric-shape {
     display: none;
   }
   
@@ -271,3 +365,27 @@ body {
     color: black !important;
   }
 }
+
+/* Intersection observer optimizations */
+.geometric-visible {
+  opacity: 1;
+  transform: translateZ(0);
+}
+
+.geometric-hidden {
+  opacity: 0;
+  transform: translateZ(0) scale(0.8);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Enhanced blur effects for depth */
+.depth-blur-1 { filter: blur(0.5px); }
+.depth-blur-2 { filter: blur(1px); }
+.depth-blur-3 { filter: blur(1.5px); }
+.depth-blur-4 { filter: blur(2px); }
+
+/* Color variations for geometric shapes */
+.geometric-primary { color: rgba(120, 255, 214, 0.15); }
+.geometric-secondary { color: rgba(120, 119, 255, 0.15); }
+.geometric-accent { color: rgba(255, 119, 120, 0.15); }
+.geometric-muted { color: rgba(200, 120, 255, 0.08); }
