@@ -1,11 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
+import { useEffect, useState, useCallback } from "react"
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
 
 interface GeometricObject {
   id: number
-  type: 'triangle' | 'circle' | 'square' | 'hexagon' | 'diamond' | 'line'
+  type: 'triangle' | 'circle' | 'square' | 'hexagon' | 'diamond' | 'line' | 'star' | 'pentagon'
   size: number
   initialX: number
   initialY: number
@@ -13,45 +13,94 @@ interface GeometricObject {
   opacity: number
   rotation: number
   color: string
+  pulseDelay: number
+  waveOffset: number
+  spiralRadius: number
 }
 
 export function GeometricBackground() {
   const [objects, setObjects] = useState<GeometricObject[]>([])
+  const [isVisible, setIsVisible] = useState(true)
   const { scrollYProgress } = useScroll()
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const mouseXSpring = useSpring(mouseX, { damping: 25, stiffness: 100 })
+  const mouseYSpring = useSpring(mouseY, { damping: 25, stiffness: 100 })
+
+  // Mouse tracking
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set((e.clientX / window.innerWidth) * 2 - 1)
+      mouseY.set((e.clientY / window.innerHeight) * 2 - 1)
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [mouseX, mouseY])
+
+  // Visibility optimization
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(!document.hidden)
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
 
   // Generate geometric objects
   useEffect(() => {
     const colors = [
-      'rgba(120, 255, 214, 0.15)',
-      'rgba(120, 119, 255, 0.15)', 
-      'rgba(255, 119, 120, 0.15)',
-      'rgba(200, 120, 255, 0.15)',
-      'rgba(120, 200, 255, 0.15)',
-      'rgba(180, 255, 120, 0.15)',
-      'rgba(255, 180, 255, 0.15)',
-      'rgba(255, 200, 120, 0.15)',
+      'rgba(120, 255, 214, 0.08)',
+      'rgba(120, 119, 255, 0.08)', 
+      'rgba(255, 119, 120, 0.08)',
+      'rgba(200, 120, 255, 0.08)',
+      'rgba(120, 200, 255, 0.08)',
+      'rgba(180, 255, 120, 0.08)',
+      'rgba(255, 180, 255, 0.08)',
+      'rgba(255, 200, 120, 0.08)',
+      'rgba(100, 255, 255, 0.08)',
+      'rgba(255, 100, 200, 0.08)',
     ]
 
-    const types: GeometricObject['type'][] = ['triangle', 'circle', 'square', 'hexagon', 'diamond', 'line']
+    const types: GeometricObject['type'][] = ['triangle', 'circle', 'square', 'hexagon', 'diamond', 'line', 'star', 'pentagon']
 
-    const newObjects: GeometricObject[] = Array.from({ length: 25 }, (_, i) => ({
+    const newObjects: GeometricObject[] = Array.from({ length: 35 }, (_, i) => ({
       id: i,
       type: types[Math.floor(Math.random() * types.length)],
-      size: Math.random() * 80 + 20, // 20-100px
-      initialX: Math.random() * 100, // 0-100%
-      initialY: Math.random() * 100, // 0-100%
-      speed: Math.random() * 0.8 + 0.2, // 0.2-1.0
-      opacity: Math.random() * 0.3 + 0.1, // 0.1-0.4
+      size: Math.random() * 100 + 15, // 15-115px
+      initialX: Math.random() * 110 - 5, // -5% to 105% (offscreen start)
+      initialY: Math.random() * 110 - 5, // -5% to 105%
+      speed: Math.random() * 1.2 + 0.3, // 0.3-1.5
+      opacity: Math.random() * 0.4 + 0.05, // 0.05-0.45
       rotation: Math.random() * 360,
-      color: colors[Math.floor(Math.random() * colors.length)]
+      color: colors[Math.floor(Math.random() * colors.length)],
+      pulseDelay: Math.random() * 5,
+      waveOffset: Math.random() * Math.PI * 2,
+      spiralRadius: Math.random() * 50 + 20
     }))
 
     setObjects(newObjects)
   }, [])
 
-  const renderGeometricShape = (obj: GeometricObject) => {
-    const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -200 * obj.speed])
-    const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 180 * obj.speed])
+  const renderGeometricShape = useCallback((obj: GeometricObject) => {
+    if (!isVisible) return null
+
+    // Complex scroll-based transforms
+    const scrollOffset = useTransform(scrollYProgress, [0, 1], [0, -300 * obj.speed])
+    const rotationOffset = useTransform(scrollYProgress, [0, 1], [obj.rotation, obj.rotation + 360 * obj.speed])
+    
+    // Wave motion
+    const waveX = useTransform(scrollYProgress, [0, 1], [0, Math.sin(obj.waveOffset) * 100])
+    const waveY = useTransform(scrollYProgress, [0, 1], [0, Math.cos(obj.waveOffset * 1.3) * 50])
+    
+    // Mouse interaction
+    const mouseInfluenceX = useTransform(mouseXSpring, [-1, 1], [-20 * obj.speed, 20 * obj.speed])
+    const mouseInfluenceY = useTransform(mouseYSpring, [-1, 1], [-20 * obj.speed, 20 * obj.speed])
+    
+    // Spiral motion
+    const spiralX = useTransform(scrollYProgress, [0, 1], [0, Math.cos(obj.spiralRadius * 0.1) * obj.spiralRadius])
+    const spiralY = useTransform(scrollYProgress, [0, 1], [0, Math.sin(obj.spiralRadius * 0.1) * obj.spiralRadius])
 
     const shapeProps = {
       width: obj.size,
@@ -60,19 +109,32 @@ export function GeometricBackground() {
       opacity: obj.opacity,
     }
 
+    const baseMotionProps = {
+      key: obj.id,
+      className: "absolute will-change-transform",
+      style: {
+        left: `${obj.initialX}%`,
+        top: `${obj.initialY}%`,
+        x: [scrollOffset, waveX, mouseInfluenceX, spiralX],
+        y: [scrollOffset, waveY, mouseInfluenceY, spiralY],
+        rotate: rotationOffset,
+      },
+      animate: {
+        scale: [1, 1.1, 1],
+        opacity: [obj.opacity, obj.opacity * 1.5, obj.opacity],
+      },
+      transition: {
+        duration: 4 + obj.pulseDelay,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: obj.pulseDelay,
+      }
+    }
+
     switch (obj.type) {
       case 'triangle':
         return (
-          <motion.div
-            key={obj.id}
-            className="absolute"
-            style={{
-              left: `${obj.initialX}%`,
-              top: `${obj.initialY}%`,
-              y: scrollOffset,
-              rotate: rotationOffset,
-            }}
-          >
+          <motion.div {...baseMotionProps}>
             <div
               style={{
                 width: 0,
@@ -81,6 +143,7 @@ export function GeometricBackground() {
                 borderRight: `${obj.size / 2}px solid transparent`,
                 borderBottom: `${obj.size}px solid ${obj.color}`,
                 opacity: obj.opacity,
+                filter: 'blur(0.5px)',
               }}
             />
           </motion.div>
@@ -89,14 +152,13 @@ export function GeometricBackground() {
       case 'circle':
         return (
           <motion.div
-            key={obj.id}
-            className="absolute rounded-full"
+            {...baseMotionProps}
+            className="absolute rounded-full will-change-transform"
             style={{
-              left: `${obj.initialX}%`,
-              top: `${obj.initialY}%`,
-              y: scrollOffset,
-              rotate: rotationOffset,
+              ...baseMotionProps.style,
               ...shapeProps,
+              filter: 'blur(1px)',
+              boxShadow: `0 0 20px ${obj.color}`,
             }}
           />
         )
@@ -104,14 +166,12 @@ export function GeometricBackground() {
       case 'square':
         return (
           <motion.div
-            key={obj.id}
-            className="absolute"
+            {...baseMotionProps}
             style={{
-              left: `${obj.initialX}%`,
-              top: `${obj.initialY}%`,
-              y: scrollOffset,
-              rotate: rotationOffset,
+              ...baseMotionProps.style,
               ...shapeProps,
+              filter: 'blur(0.5px)',
+              borderRadius: '2px',
             }}
           />
         )
@@ -119,18 +179,15 @@ export function GeometricBackground() {
       case 'hexagon':
         return (
           <motion.div
-            key={obj.id}
-            className="absolute"
+            {...baseMotionProps}
             style={{
-              left: `${obj.initialX}%`,
-              top: `${obj.initialY}%`,
-              y: scrollOffset,
-              rotate: rotationOffset,
+              ...baseMotionProps.style,
               width: obj.size,
               height: obj.size,
               background: obj.color,
               opacity: obj.opacity,
               clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+              filter: 'blur(0.5px)',
             }}
           />
         )
@@ -138,18 +195,47 @@ export function GeometricBackground() {
       case 'diamond':
         return (
           <motion.div
-            key={obj.id}
-            className="absolute"
+            {...baseMotionProps}
             style={{
-              left: `${obj.initialX}%`,
-              top: `${obj.initialY}%`,
-              y: scrollOffset,
-              rotate: rotationOffset,
+              ...baseMotionProps.style,
               width: obj.size,
               height: obj.size,
               background: obj.color,
               opacity: obj.opacity,
               clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+              filter: 'blur(0.5px)',
+            }}
+          />
+        )
+
+      case 'star':
+        return (
+          <motion.div
+            {...baseMotionProps}
+            style={{
+              ...baseMotionProps.style,
+              width: obj.size,
+              height: obj.size,
+              background: obj.color,
+              opacity: obj.opacity,
+              clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+              filter: 'blur(0.5px)',
+            }}
+          />
+        )
+
+      case 'pentagon':
+        return (
+          <motion.div
+            {...baseMotionProps}
+            style={{
+              ...baseMotionProps.style,
+              width: obj.size,
+              height: obj.size,
+              background: obj.color,
+              opacity: obj.opacity,
+              clipPath: 'polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%)',
+              filter: 'blur(0.5px)',
             }}
           />
         )
@@ -157,17 +243,14 @@ export function GeometricBackground() {
       case 'line':
         return (
           <motion.div
-            key={obj.id}
-            className="absolute"
+            {...baseMotionProps}
             style={{
-              left: `${obj.initialX}%`,
-              top: `${obj.initialY}%`,
-              y: scrollOffset,
-              rotate: rotationOffset,
-              width: obj.size * 1.5,
-              height: 2,
-              background: obj.color,
+              ...baseMotionProps.style,
+              width: obj.size * 2,
+              height: 1,
+              background: `linear-gradient(90deg, transparent, ${obj.color}, transparent)`,
               opacity: obj.opacity,
+              filter: 'blur(0.5px)',
             }}
           />
         )
@@ -175,11 +258,33 @@ export function GeometricBackground() {
       default:
         return null
     }
-  }
+  }, [isVisible, scrollYProgress, mouseXSpring, mouseYSpring])
+
+  if (!isVisible) return null
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[-8] overflow-hidden">
-      {objects.map(obj => renderGeometricShape(obj))}
+      <div className="relative w-full h-full">
+        {objects.map(obj => renderGeometricShape(obj))}
+      </div>
+      
+      {/* Additional atmospheric effect */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.1) 100%)',
+          x: mouseInfluenceX,
+          y: mouseInfluenceY,
+        }}
+        animate={{
+          opacity: [0.0, 0.05, 0.0]
+        }}
+        transition={{
+          duration: 8,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
     </div>
   )
 }
