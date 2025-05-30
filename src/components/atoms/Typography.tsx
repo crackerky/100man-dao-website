@@ -29,6 +29,21 @@ const typographyVariants = cva(
   }
 )
 
+// Map variants to their corresponding HTML elements
+const variantElementMap = {
+  h1: 'h1',
+  h2: 'h2', 
+  h3: 'h3',
+  h4: 'h4',
+  h5: 'h5',
+  h6: 'h6',
+  p: 'p',
+  lead: 'p',
+  large: 'p',
+  small: 'span',
+  muted: 'p',
+} as const
+
 export interface TypographyProps
   extends React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof typographyVariants> {
@@ -40,20 +55,21 @@ export interface TypographyProps
 
 const Typography = React.forwardRef<HTMLElement, TypographyProps>(
   ({ className, variant, gradient = false, isAnimated = false, animationDelay = 0, as, children, ...props }, ref) => {
-    const Component = (as || (variant?.startsWith('h') ? variant : 'p')) as keyof JSX.IntrinsicElements
+    // Use the explicit 'as' prop, or fall back to the mapped element for the variant
+    const Component = as || (variant ? variantElementMap[variant] : 'p')
     
-    const content = React.createElement(
-      Component,
-      {
-        className: cn(
+    const content = (
+      <Component
+        className={cn(
           typographyVariants({ variant }),
           gradient && "gradient-text",
           className
-        ),
-        ref: ref as any,
-        ...props
-      },
-      children
+        )}
+        ref={ref as any}
+        {...props}
+      >
+        {children}
+      </Component>
     )
 
     if (isAnimated) {
