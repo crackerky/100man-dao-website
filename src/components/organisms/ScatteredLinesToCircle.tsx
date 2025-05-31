@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useEffect, useState } from "react"
 import { motion, useScroll, useTransform, useSpring } from "framer-motion"
 
 interface LineSegment {
@@ -139,6 +139,24 @@ function MovingLine({ segment, scrollProgress }: { segment: LineSegment, scrollP
 
 export default function ScatteredLinesToCircle() {
   const { scrollYProgress } = useScroll()
+  const [screenSize, setScreenSize] = useState({ width: 800, height: 600 })
+  
+  // Handle screen resize for responsive design
+  useEffect(() => {
+    const updateScreenSize = () => {
+      setScreenSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
+    }
+    
+    // Set initial size
+    updateScreenSize()
+    
+    // Add resize listener
+    window.addEventListener('resize', updateScreenSize)
+    return () => window.removeEventListener('resize', updateScreenSize)
+  }, [])
   
   // Smooth spring animation
   const springProgress = useSpring(scrollYProgress, { 
@@ -149,20 +167,18 @@ export default function ScatteredLinesToCircle() {
 
   // Generate the scattered lines and their final positions
   const lineSegments = useMemo(() => {
-    const screenWidth = window.innerWidth || 800
-    const screenHeight = window.innerHeight || 600
     const lineCount = 60 // Good number for a smooth circle
     
     // Generate scattered lines
-    const scattered = generateScatteredLines(lineCount, screenWidth, screenHeight)
+    const scattered = generateScatteredLines(lineCount, screenSize.width, screenSize.height)
     
     // Calculate final circle positions - screen center
-    const finalCenterX = screenWidth / 2
-    const finalCenterY = screenHeight / 2
+    const finalCenterX = screenSize.width / 2
+    const finalCenterY = screenSize.height / 2
     const finalRadius = 180
     
     return calculateCirclePositions(scattered, finalCenterX, finalCenterY, finalRadius)
-  }, [])
+  }, [screenSize.width, screenSize.height])
 
   // Story phase transitions
   const scatterPhase = useTransform(springProgress, [0, 0.15], [1, 0])
@@ -189,19 +205,34 @@ export default function ScatteredLinesToCircle() {
   const wave4Opacity = useTransform(springProgress, [0.85, 1], [0.4, 0])
 
   // Get screen center
-  const screenWidth = window.innerWidth || 800
-  const screenHeight = window.innerHeight || 600
-  const centerX = screenWidth / 2
-  const centerY = screenHeight / 2
+  const centerX = screenSize.width / 2
+  const centerY = screenSize.height / 2
 
   return (
-    <div className="w-full min-h-[400vh] bg-gradient-to-br from-slate-950 via-slate-900 to-black relative">
+    <div 
+      className="w-full min-h-[400vh] relative"
+      style={{
+        background: 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #000000 100%)'
+      }}
+    >
       {/* Fixed viewport */}
       <div className="fixed inset-0 overflow-hidden">
-        {/* Dynamic background */}
+        {/* Visible test background - remove this once gradients work */}
+        <div 
+          className="absolute inset-0" 
+          style={{
+            background: 'radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%)',
+            opacity: 0.3
+          }}
+        />
+        
+        {/* Dynamic background with fallback */}
         <motion.div 
-          className="absolute inset-0 bg-gradient-radial from-white/5 via-transparent to-transparent"
-          style={{ opacity: backgroundIntensity }}
+          className="absolute inset-0"
+          style={{ 
+            opacity: backgroundIntensity,
+            background: 'radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%)'
+          }}
         />
         
         {/* Main SVG Animation */}
@@ -400,7 +431,7 @@ export default function ScatteredLinesToCircle() {
         </svg>
         
         {/* Story progression indicators */}
-        <div className="fixed top-10 left-10 text-white/50 text-sm font-light space-y-3">
+        <div className="fixed top-10 left-10 text-white/50 text-sm font-light space-y-3 z-10">
           <motion.div style={{ opacity: scatterPhase }} className="flex items-center space-x-3">
             <div className="w-3 h-3 rounded-full bg-white/40" />
             <span>Scattered lines seeking purpose...</span>
@@ -420,7 +451,7 @@ export default function ScatteredLinesToCircle() {
         </div>
         
         {/* Elegant progress indicator */}
-        <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2">
+        <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2 z-10">
           <div className="relative w-40 h-40">
             <svg className="w-full h-full transform -rotate-90">
               <circle
@@ -461,7 +492,7 @@ export default function ScatteredLinesToCircle() {
         
         {/* Story title */}
         <motion.div 
-          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/20 text-center pointer-events-none"
+          className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white/20 text-center pointer-events-none z-10"
           style={{ opacity: scatterPhase }}
         >
           <h1 className="text-4xl font-light mb-2">Unity</h1>
@@ -470,7 +501,7 @@ export default function ScatteredLinesToCircle() {
         
         {/* Scroll invitation */}
         <motion.div 
-          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 text-white/30 text-xs text-center"
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 text-white/30 text-xs text-center z-10"
           style={{ opacity: scatterPhase }}
         >
           ↓ Scroll to witness the transformation ↓

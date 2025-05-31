@@ -13,6 +13,22 @@ const nextConfig = {
     optimizePackageImports: ['framer-motion', 'lucide-react'],
     optimizeCss: false, // Disable to prevent critters dependency issues
   },
+  // Headers configuration to handle CSP for Framer Motion
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: process.env.NODE_ENV === 'development' 
+              ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'none';"
+              : "script-src 'self' 'unsafe-inline'; object-src 'none';"
+          },
+        ],
+      },
+    ]
+  },
   // Webpack optimizations
   webpack: (config, { isServer }) => {
     // Optimize for production builds
@@ -31,12 +47,12 @@ const nextConfig = {
         chunks: 'all',
         cacheGroups: {
           vendor: {
-            test: /[\\/]node_modules[\\/]/,
+            test: /[\\\\/]node_modules[\\\\/]/,
             name: 'vendors',
             chunks: 'all',
           },
           framerMotion: {
-            test: /[\\/]node_modules[\\/]framer-motion[\\/]/,
+            test: /[\\\\/]node_modules[\\\\/]framer-motion[\\\\/]/,
             name: 'framer-motion',
             chunks: 'all',
           },
