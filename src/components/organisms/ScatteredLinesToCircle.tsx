@@ -209,13 +209,30 @@ export default function ScatteredLinesToCircle() {
   const centerY = screenSize.height / 2
 
   return (
-    <div className="w-full min-h-[400vh] bg-gradient-to-br from-slate-950 via-slate-900 to-black relative">
+    <div 
+      className="w-full min-h-[400vh] relative"
+      style={{
+        background: 'linear-gradient(135deg, #020617 0%, #0f172a 50%, #000000 100%)'
+      }}
+    >
       {/* Fixed viewport */}
       <div className="fixed inset-0 overflow-hidden">
-        {/* Dynamic background */}
+        {/* Visible test background - remove this once gradients work */}
+        <div 
+          className="absolute inset-0" 
+          style={{
+            background: 'radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%)',
+            opacity: 0.3
+          }}
+        />
+        
+        {/* Dynamic background with fallback */}
         <motion.div 
-          className="absolute inset-0 bg-gradient-radial from-white/5 via-transparent to-transparent"
-          style={{ opacity: backgroundIntensity }}
+          className="absolute inset-0"
+          style={{ 
+            opacity: backgroundIntensity,
+            background: 'radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%)'
+          }}
         />
         
         {/* Main SVG Animation */}
