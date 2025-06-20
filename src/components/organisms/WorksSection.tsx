@@ -5,24 +5,24 @@ import { motion } from "framer-motion"
 export function WorksSection() {
   const projects = [
     {
-      title: "Million Real Estate",
+      title: "千葉県 耕作放棄地再生プロジェクト",
       gradient: "linear-gradient(45deg, #1a1a2e, #16213e)",
-      category: "Real Estate"
+      category: "農地活用 | 2.5ヘクタール"
     },
     {
-      title: "MMD DeFi Protocol",
+      title: "京都府 古民家シェアハウス",
       gradient: "linear-gradient(45deg, #2e1a1a, #3e1621)",
-      category: "DeFi"
+      category: "空き家活用 | 築100年"
     },
     {
-      title: "Asset NFT Platform",
+      title: "長野県 山林キャンプ場開発",
       gradient: "linear-gradient(45deg, #1a2e1a, #213e16)",
-      category: "NFT"
+      category: "山林活用 | 10ヘクタール"
     },
     {
-      title: "Community Governance",
+      title: "岐阜県 廃校リノベーション",
       gradient: "linear-gradient(45deg, #2e2e1a, #3e3e16)",
-      category: "Governance"
+      category: "公共施設活用 | 3,000㎡"
     }
   ]
 
@@ -35,7 +35,7 @@ export function WorksSection() {
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, margin: "-50px" }}
       >
-        Featured Projects
+        実施中プロジェクト
       </motion.h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 max-w-6xl mx-auto">

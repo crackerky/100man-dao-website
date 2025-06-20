@@ -33,13 +33,13 @@ export function ProfileSection() {
           <p className="text-lg leading-relaxed opacity-80">
             We&apos;re Million Member DAO.
             <br /><br />
-            Community-driven Asset Valorization Platform.
+            日本全国の放置された資産を、価値ある資源へと変える。
             <br /><br />
-            We work in idle asset utilization and value creation, based in Japan, with blockchain technology at the core.
-            <br /><br />
-            We pursuing create experiences that ignite impact and transformation,
+            耕作放棄地、空き家、空地、地方の山林など、活用されていない資産を
             <br />
-            like a blue flame in the economy.
+            コミュニティの力とAI・OSS技術で再生・価値化します。
+            <br /><br />
+            100万人のコミュニティで、日本の遊休資産問題を解決へ。
           </p>
         </motion.div>
 
@@ -51,11 +51,13 @@ export function ProfileSection() {
           viewport={{ once: true }}
         >
           <p className="text-base leading-relaxed opacity-60">
-            コミュニティ主導型資産価値化プラットフォーム「Million Member DAO」です。
+            現在日本には、耕作放棄地が42万ヘクタール、空き家が849万戸存在します。
             <br /><br />
-            日本を拠点にブロックチェーン技術を軸とした遊休資産活用と価値創造を行っています。
+            これらの資産をDAO参加者と共に、農業体験施設、シェアハウス、
+            <br />
+            キャンプ場、再生可能エネルギー施設などへと転換。
             <br /><br />
-            経済に青い炎のような衝撃や変革が湧き上がる体験を追求しています。
+            Discordでの週1イベント開催で、誰でも参加・貢献できるオープンなコミュニティを運営。
           </p>
         </motion.div>
 

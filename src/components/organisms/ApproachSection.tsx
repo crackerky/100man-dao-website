@@ -9,35 +9,37 @@ export function ApproachSection() {
       type: "real-estate" as const,
       title: "Real Estate",
       titleJp: "不動産",
-      description: `I design and create purposeful strategies to effectively
-utilize idle properties in both residential and commercial sectors. Specializing in asset transformation,
-I focus on the flow and optimization of real estate value,
-balancing community impact with sustainable returns.`
+      description: `耕作放棄地を農業体験施設や市民農園へ。
+空き家をシェアハウスや民泊施設へ。
+空地をキャンプ場やイベントスペースへ。
+実際の再生事例を通じて、地域に新しい価値を創出します。`
     },
     {
       type: "financial" as const,
-      title: "Financial Assets",
-      titleJp: "金融資産",
-      description: `I provide DeFi-focused development across various areas,
-including yield farming, liquidity provision, staking optimization,
-and portfolio diversification.
-I also prioritize risk management and transparency to deliver sustainable and intuitive financial growth.`
+      title: "OSS Development",
+      titleJp: "OSS開発",
+      description: `AIを活用したDAO運営支援ツールを開発。
+DAO設立支援botや税務自動化botなどのOSSを提供。
+誰でも利用可能で、誰でも開発に参加できる仕組み。
+技術の民主化により、DAOへの参加障壁を低減します。`
     },
     {
       type: "digital" as const,
       title: "Digital Assets",
       titleJp: "デジタル資産",
-      description: `I create assets that digitally embody a community's vision and concept,
-especially in NFT and token ecosystems. By unifying elements such as utility, scarcity, governance rights, and interoperability,
-I build digital assets that are both valuable and meaningful for holders.`
+      description: `再生プロジェクトの進捗をNFTで可視化。
+貢献度に応じたガバナンストークンを発行。
+地域の特産品や体験をデジタル資産として価値化。
+メタバース空間での地域PRや仮想観光を展開します。`
     },
     {
       type: "community" as const,
       title: "Community Power",
       titleJp: "コミュニティパワー",
-      description: `I lead the collective intelligence strategy for projects,
-ensuring the community's vision and values are reflected in the ecosystem. From governance to value distribution,
-I manage each stage to deliver cohesive and impactful community-driven growth.`
+      description: `Discordで週1回のイベントを定期開催。
+誰でも入れて、誰でも力になれるオープンなDAO。
+地域住民、開発者、専門家が協働する場を提供。
+100万人の多様な力で、日本の遊休資産問題を解決へ導きます。`
     }
   ]
 
@@ -58,15 +60,15 @@ I manage each stage to deliver cohesive and impactful community-driven growth.`
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           viewport={{ once: true }}
         >
-          I synthesize four key areas
+          We transform idle assets
           <br />
-          with both logical and intuitive approaches,
+          into valuable community resources.
           <br />
-          shaping visions and communities
+          From abandoned farmland to vacant houses,
           <br />
-          to deliver
+          we create real value
           <br />
-          new value through digital experiences.
+          through concrete regeneration projects.
         </motion.h2>
         
         <motion.p
@@ -76,11 +78,11 @@ I manage each stage to deliver cohesive and impactful community-driven growth.`
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           viewport={{ once: true }}
         >
-          論理・感覚の両面からのアプローチと4つの主要な領域を
+          耕作放棄地42万ヘクタール、空き家849万戸。
           <br />
-          組み合わせ、ビジョンやコミュニティを形にすることで
+          これらの放置された資産を、100万人のDAOメンバーと共に
           <br />
-          デジタル体験を通じた新しい価値を生み出します。
+          実際のプロジェクトとして再生・活用していきます。
         </motion.p>
       </motion.div>
 
