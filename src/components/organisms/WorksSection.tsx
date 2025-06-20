@@ -27,9 +27,9 @@ export function WorksSection() {
   ]
 
   return (
-    <section id="works" className="px-10 py-[100px]">
+    <section id="works" className="px-6 lg:px-10 py-20 lg:py-32">
       <motion.h2
-        className="text-4xl md:text-6xl lg:text-8xl font-thin text-center mb-[100px] tracking-[0.1em]"
+        className="text-3xl md:text-5xl lg:text-6xl font-light text-center mb-16 lg:mb-24 tracking-wide"
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -38,11 +38,11 @@ export function WorksSection() {
         実施中プロジェクト
       </motion.h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0.5 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 max-w-6xl mx-auto">
         {projects.map((project, index) => (
           <motion.div
             key={project.title}
-            className="aspect-square bg-gray-800 relative overflow-hidden cursor-pointer group"
+            className="aspect-square bg-gray-800 relative overflow-hidden cursor-pointer group rounded-2xl border border-white/10"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ 
@@ -58,12 +58,16 @@ export function WorksSection() {
             whileTap={{ scale: 0.98 }}
           >
             <div
-              className="w-full h-full flex items-center justify-center text-lg font-medium transition-all duration-500 group-hover:scale-110"
+              className="w-full h-full flex items-center justify-center p-6 transition-all duration-500 group-hover:scale-105"
               style={{ background: project.gradient }}
             >
-              <div className="text-center">
-                <div className="text-white mb-2">{project.title}</div>
-                <div className="text-white/60 text-sm">{project.category}</div>
+              <div className="text-center space-y-4">
+                <div className="text-white text-lg md:text-xl font-medium leading-tight">
+                  {project.title}
+                </div>
+                <div className="text-white/70 text-sm md:text-base font-light">
+                  {project.category}
+                </div>
               </div>
             </div>
 

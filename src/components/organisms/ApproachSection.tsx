@@ -44,54 +44,61 @@ DAO設立支援botや税務自動化botなどのOSSを提供。
   ]
 
   return (
-    <section className="px-10 py-[150px] relative">
+    <section className="px-6 lg:px-10 py-20 lg:py-32 relative">
       {/* Introduction */}
       <motion.div
-        className="text-center mb-[150px] backdrop-blur-sm bg-black/20 p-15 rounded-3xl border border-white/[0.03] max-w-6xl mx-auto"
+        className="text-center mb-20 lg:mb-32 backdrop-blur-sm bg-black/20 p-8 lg:p-15 rounded-3xl border border-white/[0.03] max-w-6xl mx-auto"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         viewport={{ once: true, margin: "-100px" }}
       >
         <motion.h2
-          className="text-3xl md:text-5xl lg:text-6xl font-light leading-tight tracking-[0.05em] mb-15 opacity-90"
+          className="text-2xl md:text-4xl lg:text-5xl font-light leading-tight tracking-wide mb-10 lg:mb-15 opacity-90"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 0.9, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
           viewport={{ once: true }}
         >
-          We transform idle assets
-          <br />
-          into valuable community resources.
-          <br />
-          From abandoned farmland to vacant houses,
-          <br />
-          we create real value
-          <br />
-          through concrete regeneration projects.
+          <span className="block mb-2">We transform idle assets</span>
+          <span className="block mb-2">into valuable community resources.</span>
+          <span className="block mb-4 text-lg md:text-2xl lg:text-3xl opacity-75">
+            From abandoned farmland to vacant houses,<br />
+            we create real value through concrete regeneration projects.
+          </span>
         </motion.h2>
         
-        <motion.p
-          className="text-xl md:text-2xl lg:text-4xl font-light leading-relaxed opacity-70"
+        <motion.div
+          className="space-y-6"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 0.7, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
           viewport={{ once: true }}
         >
-          耕作放棄地42万ヘクタール、空き家849万戸。
-          <br />
-          これらの放置された資産を、100万人のDAOメンバーと共に
-          <br />
-          実際のプロジェクトとして再生・活用していきます。
-        </motion.p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="text-center space-y-1">
+              <div className="text-2xl md:text-3xl font-bold text-blue-400">42万</div>
+              <div className="text-sm md:text-base opacity-70">ヘクタールの耕作放棄地</div>
+            </div>
+            <div className="text-center space-y-1">
+              <div className="text-2xl md:text-3xl font-bold text-blue-400">849万</div>
+              <div className="text-sm md:text-base opacity-70">戸の空き家</div>
+            </div>
+          </div>
+          
+          <p className="text-lg md:text-xl lg:text-2xl font-light leading-relaxed opacity-75 max-w-4xl mx-auto">
+            これらの放置された資産を、100万人のDAOメンバーと共に<br />
+            実際のプロジェクトとして再生・活用していきます
+          </p>
+        </motion.div>
       </motion.div>
 
       {/* Services Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 max-w-7xl mx-auto">
         {services.map((service, index) => (
           <motion.div
             key={service.type}
-            className="text-center backdrop-blur-sm bg-black/15 p-15 rounded-3xl border border-white/5 transition-all duration-500 relative overflow-hidden group hover:bg-black/25 hover:-translate-y-2.5 hover:border-white/10"
+            className="backdrop-blur-sm bg-black/15 p-6 lg:p-12 rounded-3xl border border-white/5 transition-all duration-500 relative overflow-hidden group hover:bg-black/25 hover:-translate-y-2.5 hover:border-white/10"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ 
@@ -103,36 +110,38 @@ DAO設立支援botや税務自動化botなどのOSSを提供。
           >
             <ServiceIcon type={service.type} />
             
-            <motion.h3
-              className="text-xl font-bold mb-4 tracking-wider text-white uppercase"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.6, 
-                delay: index * 0.1 + 0.2,
-                ease: "easeOut" 
-              }}
-              viewport={{ once: true }}
-            >
-              {service.title}
-            </motion.h3>
+            <div className="text-center mb-6">
+              <motion.h3
+                className="text-lg md:text-xl font-bold mb-2 tracking-wide text-white uppercase"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: index * 0.1 + 0.2,
+                  ease: "easeOut" 
+                }}
+                viewport={{ once: true }}
+              >
+                {service.title}
+              </motion.h3>
+              
+              <motion.h4
+                className="text-xl md:text-2xl font-light text-white/90 tracking-wide"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 0.9, y: 0 }}
+                transition={{ 
+                  duration: 0.6, 
+                  delay: index * 0.1 + 0.3,
+                  ease: "easeOut" 
+                }}
+                viewport={{ once: true }}
+              >
+                {service.titleJp}
+              </motion.h4>
+            </div>
             
-            <motion.h4
-              className="text-base font-normal mb-6 text-white/70 tracking-wider"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 0.7, y: 0 }}
-              transition={{ 
-                duration: 0.6, 
-                delay: index * 0.1 + 0.3,
-                ease: "easeOut" 
-              }}
-              viewport={{ once: true }}
-            >
-              {service.titleJp}
-            </motion.h4>
-            
-            <motion.p
-              className="text-sm leading-relaxed opacity-80 text-left"
+            <motion.div
+              className="text-sm md:text-base leading-relaxed opacity-80 text-left space-y-2"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 0.8, y: 0 }}
               transition={{ 
@@ -142,8 +151,12 @@ DAO設立支援botや税務自動化botなどのOSSを提供。
               }}
               viewport={{ once: true }}
             >
-              {service.description}
-            </motion.p>
+              {service.description.split('\n').map((line, lineIndex) => (
+                <p key={lineIndex} className="leading-relaxed">
+                  {line}
+                </p>
+              ))}
+            </motion.div>
           </motion.div>
         ))}
       </div>
