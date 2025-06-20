@@ -5,24 +5,25 @@ import { motion } from "framer-motion"
 export function WorksSection() {
   const projects = [
     {
-      title: "千葉県 耕作放棄地再生プロジェクト",
+      title: "長野県 空地活用プロジェクト",
       gradient: "linear-gradient(45deg, #1a1a2e, #16213e)",
-      category: "農地活用 | 2.5ヘクタール"
+      category: "空地活用 | 870坪"
     },
     {
-      title: "京都府 古民家シェアハウス",
+      title: "小豆島 島丸ごと再築プロジェクト",
       gradient: "linear-gradient(45deg, #2e1a1a, #3e1621)",
-      category: "空き家活用 | 築100年"
+      category: "離島再生 | 香川県高松市"
     },
     {
-      title: "長野県 山林キャンプ場開発",
+      title: "鎌倉 空き家再生プロジェクト",
       gradient: "linear-gradient(45deg, #1a2e1a, #213e16)",
-      category: "山林活用 | 10ヘクタール"
+      category: "空き家活用 | 神奈川県"
     },
     {
-      title: "岐阜県 廃校リノベーション",
-      gradient: "linear-gradient(45deg, #2e2e1a, #3e3e16)",
-      category: "公共施設活用 | 3,000㎡"
+      title: "次のプロジェクトを準備中...",
+      gradient: "linear-gradient(45deg, #2a2a2a, #3a3a3a)",
+      category: "全国に拡張中 | Coming Soon",
+      isExpanding: true
     }
   ]
 
@@ -58,22 +59,41 @@ export function WorksSection() {
             whileTap={{ scale: 0.98 }}
           >
             <div
-              className="w-full h-full flex items-center justify-center p-6 transition-all duration-500 group-hover:scale-105"
+              className={`w-full h-full flex items-center justify-center p-6 transition-all duration-500 group-hover:scale-105 ${
+                project.isExpanding ? 'border-2 border-dashed border-white/30' : ''
+              }`}
               style={{ background: project.gradient }}
             >
               <div className="text-center space-y-4">
-                <div className="text-white text-lg md:text-xl font-medium leading-tight">
+                <div className={`text-white text-lg md:text-xl font-medium leading-tight ${
+                  project.isExpanding ? 'opacity-70' : ''
+                }`}>
                   {project.title}
                 </div>
-                <div className="text-white/70 text-sm md:text-base font-light">
+                <div className={`text-white/70 text-sm md:text-base font-light ${
+                  project.isExpanding ? 'flex items-center justify-center gap-2' : ''
+                }`}>
                   {project.category}
+                  {project.isExpanding && (
+                    <motion.div
+                      className="flex gap-1"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      <div className="w-1 h-1 bg-white rounded-full"></div>
+                      <div className="w-1 h-1 bg-white rounded-full"></div>
+                      <div className="w-1 h-1 bg-white rounded-full"></div>
+                    </motion.div>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Hover overlay */}
             <motion.div
-              className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              className={`absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                project.isExpanding ? 'group-hover:opacity-50' : ''
+              }`}
               initial={false}
             />
 
@@ -82,6 +102,17 @@ export function WorksSection() {
               className="absolute inset-0 border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               initial={false}
             />
+            
+            {/* Expanding indicator */}
+            {project.isExpanding && (
+              <motion.div
+                className="absolute top-4 right-4 text-white/50 text-xs"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                ✨
+              </motion.div>
+            )}
           </motion.div>
         ))}
       </div>
